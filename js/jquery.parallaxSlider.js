@@ -214,6 +214,8 @@
 							}
 						});
 					});//End images.each
+				//Call resize function at the end of init
+					_setWidths();
 				});//end jquery.each
 			},//End init
 			stop: function  () {
