@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<head>
+<meta http-equiv="content-type" content="text/html" />
+<title>Parallax jQuery Slider Plugin</title>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" language="javascript"></script>
+<script src="js/jquery.easing.js" language="javascript"></script>
+<script src="js/jquery.parallaxSlider.js" language="javascript"></script>
+<script type="text/javascript">
+jQuery(document).ready(function($){
+	var easing = 'easeInOutSine';
+	$("#slider").parallaxSlider({
+		autoPlay:3000,//false to disable, otherwise int duration in ms hold between slides
+		speed:2200, //transition duration between slides
+		easing: easing,
+		easingBg: easing,
+		numBackgrounds: 3,
+		thumbRotation:false,
+		customBackground: 
+			'<div id="birds"><img src="http://localhost/WordPress/wp-content/themes/ct2012/images/bird1.gif" id="bird1" />'+
+			'<img src="http://localhost/WordPress/wp-content/themes/ct2012/images/bird2.gif" id="bird2" />'+
+			'<img src="http://localhost/WordPress/wp-content/themes/ct2012/images/bird3.gif" id="bird3" />'+
+			'<img src="http://localhost/WordPress/wp-content/themes/ct2012/images/bird4.gif" id="bird4" />'+
+		'</div>'
+	});
+})
+</script>
+</head>
+<body>
+<!-- 
+	This is the DOM element to instantiate as a jquery.parallaxSlider
+	It may have a relative or fixed width applied to it and all of the contained elements will be re-calculated accordingly
+	Useful to think of #slider as a "Viewport" and if the options.debug is true, it will be referred to as such.
+	Background images will be overflow:hidden relative to this div 
+ -->
+<div id="slider">
+	<div class="pxs_bg">
+	</div>
+	<!-- Background classes will be automatically generated, CSS must specify background images to use, see style.css for instructions -->
+	<div class="pxs_loading">Loading images...</div>
+	<div class="pxs_slider_wrapper">
+		<ul class="pxs_slider">
+			<li>
+				<a href="#"><!-- Images may be wrapped in an anchor to make them clickable -->
+					<img src="http://localhost/WordPress/wp-content/uploads/2010/12/featured_013.jpg" title="Interactive Marketing" height="250" width="940" alt="Interactive Marketing" />
+				</a>
+			</li>
+			<li>
+				<a href="#">
+					<img src="http://localhost/WordPress/wp-content/uploads/2010/12/featured_014.jpg" title="WHMCS Services" height="250" width="940" alt="WHMCS Services" />
+				</a>
+			</li>
+			<li>
+				<img src="http://localhost/WordPress/wp-content/uploads/2010/12/featured_01-02.jpg" title="Website Design" height="250" width="940" alt="Website Design" />
+			</li>
+			<li>
+				<img src="http://localhost/WordPress/wp-content/uploads/2010/12/featured_012.jpg" title="Web Hosting" height="250" width="940" alt="Web Hosting" />
+			</li>
+		</ul>
+		<div class="pxs_navigation">
+			<span class="pxs_next"></span>
+			<span class="pxs_prev"></span>
+		</div>
+		<!-- these are the thumbnails for the above featured images. They are ordered the same as the above slider images, no rel/id's required for proper functioning -->
+		<ul class="pxs_thumbnails">
+			<li>
+				<img src="http://localhost/WordPress/wp-content/uploads/2010/12/featured_013-150x150.jpg" height="150" width="150" alt="Interactive Marketing" />
+			</li>
+			<li>
+				<img src="http://localhost/WordPress/wp-content/uploads/2010/12/featured_014-150x150.jpg" height="150" width="150" alt="WHMCS Services" />
+			</li>
+			<li>
+				<img src="http://localhost/WordPress/wp-content/uploads/2010/12/featured_01-02-150x150.jpg" height="150" width="150" alt="Website Design" />
+			</li>
+			<li>
+				<img src="http://localhost/WordPress/wp-content/uploads/2010/12/featured_012-150x150.jpg" height="150" width="150" alt="Web Hosting" />
+			</li>
+		</ul>
+	</div><!-- End .pxs_slider_wrapper -->
+</div>	
+<div id="content">
+<h1>jQuery Parallax Slider</h1>
+Based off of <a target="_blank" href="http://tympanus.net/codrops/2011/01/03/parallax-slider/">Mary Lou's jQuery Parallax Slider Demo</a>
+</div>
+</body>
+</html>
