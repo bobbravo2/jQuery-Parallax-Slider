@@ -40,6 +40,13 @@
 					backgrounds = [];
 					for ( var int = options.numBackgrounds; int > 0; int--) {
 						var $bkg = $('<div class="pxs_bg'+int+'"></div>');
+						/*
+						 * 
+						var img = new Image();
+						$(img).attr('src','images/bg'+int+'.png').appendTo($bkg).bind('load.lax', function  (e) {
+							console.log('IE triggered load on image object successfully');
+						})
+						 */
 						$bkg.appendTo($pxs_bg);
 						backgrounds[int] = $bkg;
 					}
