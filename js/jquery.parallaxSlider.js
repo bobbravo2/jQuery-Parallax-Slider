@@ -40,13 +40,6 @@
 					backgrounds = [];
 					for ( var int = options.numBackgrounds; int > 0; int--) {
 						var $bkg = $('<div class="pxs_bg'+int+'"></div>');
-						/*
-						 * 
-						var img = new Image();
-						$(img).attr('src','images/bg'+int+'.png').appendTo($bkg).bind('load.lax', function  (e) {
-							console.log('IE triggered load on image object successfully');
-						})
-						 */
 						$bkg.appendTo($pxs_bg);
 						backgrounds[int] = $bkg;
 					}
@@ -63,8 +56,7 @@
 					$pxs_slider_wrapper = $('.pxs_slider_wrapper',$pxs_container),
 					$one_img = $pxs_slider.find('img:first',$pxs_container);
 					//first preload all the images
-					var loaded		= 0,
-					$images		= $pxs_slider_wrapper.find('img');
+					var loaded		= 0;
 					//add data to DOM if not set
 					if (! data) {
 						$pxs_container.data('lax', {
@@ -174,6 +166,7 @@
 						if(options.thumbRotation){
 							var angle 	= Math.floor(Math.random()*(2*options.thumbRotation))-(options.thumbRotation);
 							$this.css({
+								'-o-transform'	: 'rotate('+ angle +'deg)',
 								'-moz-transform'	: 'rotate('+ angle +'deg)',
 								'-webkit-transform'	: 'rotate('+ angle +'deg)',
 								'transform'			: 'rotate('+ angle +'deg)'
@@ -204,13 +197,13 @@
 						$pxs_container.parallaxSlider('slide',data.current,0);
 					});
 					/*
-					 * all images have been loaded
+					 * Make sure all images have been loaded
+					 * Check height is defined for IE compatibility
 					 */
-					$images.each(function(){
-						var $img	= $(this);
-						$img.bind('load.lax', function  (e) {
-							loaded++;
-							if(loaded	== data.total_elems*2) {
+					var loaded = 0;
+					data.images.each( function  () {
+						if (data.images.css('height')) loaded++;
+							if(loaded	== data.total_elems) {
 								if (options.debug) console.log('all images loaded');
 								$pxs_loading.hide();
 								$pxs_slider_wrapper.show();
@@ -220,7 +213,6 @@
 								}
 							}
 						});
-					});//End images.each
 				//Call resize function at the end of init
 					_setWidths();
 				});//end jquery.each
