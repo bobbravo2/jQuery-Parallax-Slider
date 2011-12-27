@@ -1,5 +1,6 @@
 /**
  * Parallax Slider
+ * Version 1.0.0
  * Please fork on github!
  * @author Circle Tree, LLC
  * @TODO check width of each slider and thumbnail, to allow for unique widths
@@ -58,7 +59,6 @@
 					var loaded		= 0,
 					$images		= $pxs_slider_wrapper.find('img');
 					//add data to DOM if not set
-					var img_aspect;
 					if (! data) {
 						$pxs_container.data('lax', {
 							target: $pxs_container,
