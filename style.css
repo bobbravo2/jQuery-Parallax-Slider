@@ -1,6 +1,6 @@
 /*Slider Style*/
 /*+clearfix {*/
-#slider:after, UL.pxs_thumbnails:after
+#slider:after, UL.pxs_thumbnails:after, .pxs_actions:after
 {
 	content: ".";
 	display: block;
@@ -9,11 +9,11 @@
 	visibility: hidden;
 	font-size: 0;
 }
-#slider, UL.pxs_thumbnails
+#slider, UL.pxs_thumbnails, .pxs_actions
 {
 	display: inline-block;
 }
-#slider, UL.pxs_thumbnails
+#slider, UL.pxs_thumbnails, .pxs_actions
 {
 /*\*/
 	display: block;
@@ -209,6 +209,62 @@ UL.pxs_thumbnails LI.selected IMG
 	top: 150px;
 	left: 50%;
 	margin-left: -90px;
+}
+/*[clearfix]*/.pxs_actions
+{
+	/*+placement:anchor-bottom-left 15px 10px;*/
+	position: absolute;
+	left: 15px;
+	bottom: 10px;
+	display: block;
+	width: 38px;
+}
+.pxs_pause, .pxs_play
+{
+	/*+placement:float-left 0px 0px;*/
+	float: left;
+	position: relative;
+	left: 0px;
+	top: 0px;
+	border: 1px solid #FFFFFF;
+	width: 20px;
+	cursor: pointer;
+	background-color: rgba(0, 0, 0, 0.5);
+	/*+opacity:70%;*/
+	filter: alpha(opacity=70);
+	-ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=70);
+	-moz-opacity: 0.7;
+	opacity: 0.7;
+	cursor: hand;
+	text-indent: -10000em;
+	background-image: url(images/play_pause.png);
+	/*+border-radius:3px;*/
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-khtml-border-radius: 3px;
+	border-radius: 3px 3px 3px 3px;
+	height: 20px;
+}
+.pxs_pause:hover, .pxs_play:hover
+{
+	border-color: #828282;
+	background-color: #FFF;
+}
+.pxs_pause
+{
+	background-position: -15px -10px;
+}
+.pxs_pause:hover
+{
+	background-position: -15px -21px;
+}
+.pxs_play
+{
+	background-position: 2px -10px;
+}
+.pxs_play:hover
+{
+	background-position: 2px -21px;
 }
 #birds
 {

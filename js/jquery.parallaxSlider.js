@@ -1,6 +1,6 @@
 /**
  * Parallax Slider
- * Version 1.0.0
+ * Version 1.0.2
  * Please fork on github!
  * @author Circle Tree, LLC
  * @TODO check width of each slider and thumbnail, to allow for unique widths
@@ -54,7 +54,9 @@
 					//the loading image
 					$pxs_loading	= $('.pxs_loading',$pxs_container),
 					$pxs_slider_wrapper = $('.pxs_slider_wrapper',$pxs_container),
-					$one_img = $pxs_slider.find('img:first',$pxs_container);
+					$pxs_actions = $("<span class=\"pxs_actions\"></span>"), 
+					$one_img = $($pxs_slider.find('img')[0]);
+					$pxs_actions.appendTo($pxs_container);
 					//first preload all the images
 					var loaded		= 0;
 					//add data to DOM if not set
@@ -63,6 +65,8 @@
 							target: $pxs_container,
 							total_elems: total_elems,
 							backgrounds: backgrounds,
+							buttons: {	play: $("<span class=\"pxs_play\">Play</span>"), 
+											pause: $("<span class=\"pxs_pause\">Pause</span>") },
 							current: 0,
 							slideshow:-1,
 							one_image_w: $one_img.width(),
@@ -70,11 +74,22 @@
 							nav_offset: parseInt( $(".pxs_navigation SPAN").css('width') ) + parseInt( $("UL.pxs_slider LI IMG").css('border-left-width')),
 							w_w: $(window).width(),
 							viewport_width: $pxs_container.width(),
-							images:$elems.find('IMG')
+							images:$elems.find('IMG'),
+							thumbs: $thumbs
 						});
 						data = $pxs_container.data('lax');
 					}
+					
+					data.buttons.play.bind('click.lax', function  () {
+						$pxs_container.parallaxSlider('play');
+						}).appendTo($pxs_actions);		 
+					data.buttons.pause.bind('click.lax', function  () {
+						$pxs_container.parallaxSlider('stop');
+						}).appendTo($pxs_actions);		 
 					if (options.debug) console.log('init data',data);
+					/*
+					 * Private method to resize the slider
+					 */
 					function _setWidths() {
 						var position_nav	= 0,
 						nav_top = 0;
@@ -84,23 +99,41 @@
 							width: data.viewport_width + 'px'
 						});
 						if (data.viewport_width < (data.one_image_w + data.nav_offset*2)) {
-							var width = data.viewport_width - 80,
+							//Viewport is wider than images + nav
+							var width = data.viewport_width - data.nav_offset*2,
 							height = parseInt(width/data.image_aspect),
 							nav_top = (height/2) + ($pxs_next.height()/4);
-							data.images.css({width: width+'px',height:height+'px'});
+							var images_css_object = {width: width+'px',height:height+'px'};
 						} else {
+							//Images are larger than viewport
 							var position_nav	= (data.viewport_width/2) - (data.one_image_w/2) - data.nav_offset;
 							nav_top = ((data.one_image_w / data.image_aspect) / 2) + ($pxs_next.height()/4);
 							var images_css_object = {width: data.one_image_w+'px',height:(data.one_image_w/data.image_aspect)+'px'};
-							if (options.debug) console.log('images_css_object',images_css_object);
-							data.images.css(images_css_object);
 						}
-						//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+						data.images.css(images_css_object);
 						if (options.debug) {
+							console.log('slider viewport width',data.viewport_width);
+							console.log('images_css_object',images_css_object);
 							console.log('nav_top', nav_top);
 							console.log('position nav',position_nav);
-							console.log('slider viewport width',data.viewport_width);
 						}
+						//Space the thumbs
+						data.thumbs.each(function(i){
+							var $this 	= $(this);
+							//set the left offset to current thumb index *
+							var left = 0,
+							thumbwidth = $this.width(),
+							thumbspace = thumbwidth * data.total_elems,
+							offset = (data.viewport_width - thumbspace) / (data.total_elems + 1);
+							if (i==0) left = offset;
+							else left	= ((i+1) * offset) + (i * thumbwidth);
+							$this.css('left',left+'px');
+						});
+						//Position the Thumbnail Container 
+						$pxs_thumbnails.css({
+							'width'			: data.viewport_width + 'px',
+							'margin-left' 	: -data.viewport_width/2 + 'px'
+						});
 						$pxs_next.css('right', position_nav + 'px');
 						$pxs_prev.css('left', position_nav + 'px');
 						$pxs_next.add($pxs_prev).css('top',nav_top + 'px');
@@ -108,14 +141,15 @@
 						//Set the widths of all backgrounds and the slider
 						$pxs_slider.add(backgrounds).width(pxs_slider_w + 'px');
 					}
+					
 					/*
 					clicking a thumb will slide to the respective image
 					 */
-					$thumbs.bind('click.lax',function(){
+					data.thumbs.bind('click.lax',function(){
 						var $thumb	= $(this);
 						//if autoplay interrupt when user clicks
 						if(options.autoPlay)
-							clearInterval(data.slideshow);
+							$pxs_container.parallaxSlider('stop');
 						data.current = $thumb.index();
 						$pxs_container.parallaxSlider('slide',$thumb.index());
 					});
@@ -144,40 +178,21 @@
 						if (options.debug) console.log('prev clicked: '+data.current);
 						$pxs_container.parallaxSlider('slide',data.current);
 					});
-					//Thumbnail container positioning
-					$pxs_thumbnails.css({
-						'width'			: data.one_image_w + 'px',
-						'margin-left' 	: -data.one_image_w/2 + 'px'
-					});
-
-					//Prepare to space the thumbs
-					$thumbs.each(function(i){
-						var $this 	= $(this);
-						//set the left offset to current thumb index *
-						var left = 0,
-						thumbwidth = $this.children().width(),
-						thumbspace = thumbwidth * data.total_elems,
-						offset = (data.one_image_w - thumbspace) / (data.total_elems + 1);
-						if (i==0) left = offset;
-						else left	= ((i+1) * offset) + (i * thumbwidth);
-						if (options.debug) console.log('thumb css.left',left);
-						$this.css('left',left+'px');
 							
-						if(options.thumbRotation){
-							var angle 	= Math.floor(Math.random()*(2*options.thumbRotation))-(options.thumbRotation);
-							$this.css({
-								'-o-transform'	: 'rotate('+ angle +'deg)',
-								'-moz-transform'	: 'rotate('+ angle +'deg)',
-								'-webkit-transform'	: 'rotate('+ angle +'deg)',
-								'transform'			: 'rotate('+ angle +'deg)'
-							});
-						}
-						//hovering the thumbs animates them up and down
-						$this.bind('mouseover.lax',function(){
-							$(this).stop().animate({top:options.thumbAnimate+'px'},options.thumbAnimateTime);
-						}).bind('mouseout.lax',function(){
-							$(this).stop().animate({top:'0px'}, options.thumbAnimateTime);
+					if(options.thumbRotation){
+						var angle 	= Math.floor(Math.random()*(2*options.thumbRotation))-(options.thumbRotation);
+						data.thumbs.css({
+							'-o-transform'	: 'rotate('+ angle +'deg)',
+							'-moz-transform'	: 'rotate('+ angle +'deg)',
+							'-webkit-transform'	: 'rotate('+ angle +'deg)',
+							'transform'			: 'rotate('+ angle +'deg)'
 						});
+					}
+					//hovering the thumbs animates them up and down
+					data.thumbs.bind('mouseover.lax',function(){
+						$(this).stop().animate({top:options.thumbAnimate+'px'},options.thumbAnimateTime);
+					}).bind('mouseout.lax',function(){
+						$(this).stop().animate({top:'0px'}, options.thumbAnimateTime);
 					});
 							
 					//make the first thumb selected
@@ -214,13 +229,14 @@
 							}
 						});
 				//Call resize function at the end of init
-					_setWidths();
 				});//end jquery.each
 			},//End init
 			stop: function  () {
 				return this.each( function  () {
 					var $this = $(this),
 					data = $this.data('lax');
+					data.buttons.play.show();
+					data.buttons.pause.hide();
 					if (options.debug) console.log('pre-(stop) data',data.slideshow);
 					clearInterval(data.slideshow);
 					if (options.debug) console.log('stop data',data);
@@ -237,11 +253,16 @@
 						console.log('typeof data.slideshow',typeof(data.slideshow));
 						console.log('data.slideshow',data.slideshow);
 					}
+					
+					
+					
+					data.buttons.pause.show();
+					data.buttons.play.hide();
 					if (options.autoPlay == 0) options.autoPlay = 3000; //Default override for API invoked play
 					data.slideshow	= setInterval(function(){
 						if (options.debug) console.log('play interval tick');
 						$('.pxs_next',data.target).trigger('click.lax');
-					},options.autoPlay);
+					}, options.autoPlay);
 				});
 			},
 			/**
