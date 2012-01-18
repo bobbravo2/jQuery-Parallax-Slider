@@ -79,12 +79,14 @@
 						});
 						data = $pxs_container.data('lax');
 					}
-					
+					//Set up the play/pause buttons
 					data.buttons.play.bind('click.lax', function  () {
 						$pxs_container.parallaxSlider('play',true);
+						return false;
 						}).appendTo($pxs_actions);		 
 					data.buttons.pause.bind('click.lax', function  () {
 						$pxs_container.parallaxSlider('stop');
+						return false;
 						}).appendTo($pxs_actions);		 
 					if (options.debug) console.log('init data',data);
 					/*
