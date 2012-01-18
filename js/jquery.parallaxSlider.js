@@ -81,7 +81,7 @@
 					}
 					
 					data.buttons.play.bind('click.lax', function  () {
-						$pxs_container.parallaxSlider('play');
+						$pxs_container.parallaxSlider('play',true);
 						}).appendTo($pxs_actions);		 
 					data.buttons.pause.bind('click.lax', function  () {
 						$pxs_container.parallaxSlider('stop');
@@ -228,13 +228,13 @@
 								}
 							}
 						});
-				//Call resize function at the end of init
 				});//end jquery.each
 			},//End init
 			stop: function  () {
 				return this.each( function  () {
 					var $this = $(this),
 					data = $this.data('lax');
+					//Toggle the buttons
 					data.buttons.play.show();
 					data.buttons.pause.hide();
 					if (options.debug) console.log('pre-(stop) data',data.slideshow);
@@ -242,7 +242,10 @@
 					if (options.debug) console.log('stop data',data);
 				});	
 			},
-			play: function  () {
+			play: function  (playbutton) {
+				//If this is a play button triggered event
+				//Invoke a slide immediately for a more responsive "feel"
+				if (playbutton) $('.pxs_next',data.target).trigger('click.lax');
 				return this.each( function  () {
 					options.circular = true;
 					$this = $(this),
@@ -253,9 +256,7 @@
 						console.log('typeof data.slideshow',typeof(data.slideshow));
 						console.log('data.slideshow',data.slideshow);
 					}
-					
-					
-					
+					//Toggle the buttons
 					data.buttons.pause.show();
 					data.buttons.play.hide();
 					if (options.autoPlay == 0) options.autoPlay = 3000; //Default override for API invoked play
