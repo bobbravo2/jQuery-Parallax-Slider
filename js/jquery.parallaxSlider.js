@@ -50,13 +50,15 @@
 					$pxs_thumbnails = $('.pxs_thumbnails',$pxs_container),
 					//the thumbs
 					$thumbs			= $pxs_thumbnails.children(),
-					//the interval for the autoplay mode
 					//the loading image
 					$pxs_loading	= $('.pxs_loading',$pxs_container),
 					$pxs_slider_wrapper = $('.pxs_slider_wrapper',$pxs_container),
 					$pxs_actions = $("<span class=\"pxs_actions\"></span>"), 
 					$one_img = $($pxs_slider.find('img')[0]);
 					$pxs_actions.appendTo($pxs_container);
+					//Prepare the loading state
+					$pxs_loading.show();
+					$pxs_slider_wrapper.hide();
 					//first preload all the images
 					var loaded		= 0;
 					//add data to DOM if not set
@@ -223,11 +225,12 @@
 							if(loaded	== data.total_elems) {
 								if (options.debug) console.log('all images loaded');
 								$pxs_loading.hide();
-								$pxs_slider_wrapper.show();
+								$pxs_slider_wrapper.fadeIn('slow', function() {
+									if (options.autoPlay) {
+										$pxs_container.parallaxSlider('play');
+									}
+								});
 								_setWidths();
-								if (options.autoPlay) {
-									$pxs_container.parallaxSlider('play');
-								}
 							}
 						});
 				});//end jquery.each
