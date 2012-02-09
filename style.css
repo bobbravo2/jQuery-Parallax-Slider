@@ -212,9 +212,9 @@ UL.pxs_thumbnails LI.selected IMG
 }
 /*[clearfix]*/.pxs_actions
 {
-	/*+placement:anchor-bottom-left 15px 10px;*/
+	/*+placement:anchor-bottom-left 10px 10px;*/
 	position: absolute;
-	left: 15px;
+	left: 10px;
 	bottom: 10px;
 	display: block;
 	width: 38px;
