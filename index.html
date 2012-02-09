@@ -6,10 +6,11 @@
 <!-- 
 <script type="text/javascript" src="https://getfirebug.com/firebug-lite.js"></script>
  -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" language="javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js" language="javascript"></script>
 <script src="js/jquery.easing.js" language="javascript"></script>
 <script src="js/jquery.parallaxSlider.js" language="javascript"></script>
 <script type="text/javascript">
+
 jQuery(document).ready(function($){
 	var easing = 'jswing';
 	$("#slider").parallaxSlider({
@@ -18,9 +19,14 @@ jQuery(document).ready(function($){
 		easing: easing,
 		easingBg: easing,
 		numBackgrounds: 3,
-		thumbRotation:false
+		thumbRotation:false,
+		debug:true,
+		thumbs:false,
+		circular:false
+		
 	});
 })
+
 </script>
 </head>
 <body>
@@ -39,19 +45,19 @@ jQuery(document).ready(function($){
 		<ul class="pxs_slider">
 			<li>
 				<a href="#"><!-- Images may be wrapped in an anchor to make them clickable -->
-					<img src="http://192.168.0.8/lax/images/featured_013.jpg" height="250" width="940" title="Interactive Marketing" alt="Interactive Marketing" />
+					<img src="images/featured_012.jpg" height="250" width="940" title="Interactive Marketing" alt="Interactive Marketing" />
 				</a>
 			</li>
 			<li>
 				<a href="#">
-					<img src="http://192.168.0.8/lax/images/featured_014.jpg" title="WHMCS Services" height="250" width="940" alt="WHMCS Services" />
+					<img src="images/featured_011.jpg" title="WHMCS Services" height="250" width="940" alt="WHMCS Services" />
 				</a>
 			</li>
 			<li>
-				<img src="http://192.168.0.8/lax/images/featured_012.jpg" title="Website Design" height="250" width="940" alt="Website Design" />
+				<img src="images/featured_012.jpg" title="Website Design" height="250" width="940" alt="Website Design" />
 			</li>
 			<li>
-				<img src="http://192.168.0.8/lax/images/featured_012.jpg" title="Web Hosting" height="250" width="940" alt="Web Hosting" />
+				<img src="images/featured_011.jpg" title="Web Hosting" height="250" width="940" alt="Web Hosting" />
 			</li>
 		</ul>
 		<div class="pxs_navigation">
@@ -61,22 +67,41 @@ jQuery(document).ready(function($){
 		<!-- these are the thumbnails for the above featured images. They are ordered the same as the above slider http://192.168.0.8/lax/images, no rel/id's required for proper functioning -->
 		<ul class="pxs_thumbnails">
 			<li>
-				<img src="http://192.168.0.8/lax/images/featured_013-150x150.jpg" height="150" width="150" alt="Interactive Marketing" />
+				<img src="images/featured_012-150x150.jpg" height="150" width="150" alt="Interactive Marketing" />
 			</li>
 			<li>
-				<img src="http://192.168.0.8/lax/images/featured_014-150x150.jpg" height="150" width="150" alt="WHMCS Services" />
+				<img src="images/featured_012-150x150.jpg" height="150" width="150" alt="WHMCS Services" />
 			</li>
 			<li>
-				<img src="http://192.168.0.8/lax/images/featured_012-150x150.jpg" height="150" width="150" alt="Website Design" />
+				<img src="images/featured_012-150x150.jpg" height="150" width="150" alt="Website Design" />
 			</li>
 			<li>
-				<img src="http://192.168.0.8/lax/images/featured_012-150x150.jpg" height="150" width="150" alt="Web Hosting" />
+				<img src="images/featured_012-150x150.jpg" height="150" width="150" alt="Web Hosting" />
 			</li>
 		</ul>
 	</div><!-- End .pxs_slider_wrapper -->
 </div>	
 <div id="content">
 <h1>jQuery Parallax Slider</h1>
+<p>New in 1.1.7  requires jQuery 1.7 for event delegation.</p>
+<h2>Default options:</h2>
+<code><pre>
+var options = {
+			autoPlay		: 3000,//(mixed) (bool) false to disable, (int) duration to hold between slides in ms
+			speed			: 1000,//(int) speed of each slide animation in ms
+			easingBg		: 'easeInOutQuart',//(string) easing effect for the background animation
+			easing			: 'easeInOutQuart',//(string) easing effect for the slide animation
+			circular		: true,//(bool) true, will repeat, false, will stop at the end
+			thumbs			: true,// (bool) true enables thumbnails, false disables
+			thumbRotation	: 5,//(mixed): (int) degrees thumbs will be randomly rotated, bool false to disable rotation
+			thumbAnimate 	: -10, //(int) px to animate thumbnails
+			thumbAnimateTime: 100, //(int) ms animation for thumb animation
+			numBackgrounds: 3, //(int) Number of parallax backgrounds
+			customBackground: false, //(string) Custom Background markup
+			debug: false //(bool) true: enable console statements for debugging
+		};
+</pre>
+</code>
 Based off of <a target="_blank" href="http://tympanus.net/codrops/2011/01/03/parallax-slider/">Mary Lou's jQuery Parallax Slider Demo</a>
 </div>
 </body>
