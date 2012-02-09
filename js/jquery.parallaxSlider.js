@@ -1,8 +1,11 @@
 /**
  * Parallax Slider
- * Version 1.0.2
+ * Version 1.1.7
  * Please fork on github!
  * @author Circle Tree, LLC
+ * @TODO fix prev/next click not resetting timeout or clearing it altogether
+ * @TODO fix options thumbnails disabled
+ * @TODO test circular function
  * @TODO check width of each slider and thumbnail, to allow for unique widths
  */
 (function($) {
@@ -12,6 +15,7 @@
 			easingBg		: 'easeInOutQuart',//(string) easing effect for the background animation
 			easing			: 'easeInOutQuart',//(string) easing effect for the slide animation
 			circular		: true,//(bool) true, will repeat, false, will stop at the end
+			thumbs			: true,// (bool) true enables thumbnails, false disables
 			thumbRotation	: 5,//(mixed): (int) degrees thumbs will be randomly rotated, bool false to disable rotation
 			thumbAnimate 	: -10, //(int) px to animate thumbnails
 			thumbAnimateTime: 100, //(int) ms animation for thumb animation
@@ -43,6 +47,7 @@
 						$bkg.appendTo($pxs_bg);
 						backgrounds[int] = $bkg;
 					}
+					
 					if (options.customBackground) {
 						$(options.customBackground).appendTo($pxs_bg);
 					}
@@ -158,7 +163,7 @@
 						$pxs_container.parallaxSlider('slide',$thumb.index());
 					});
 					//slide when clicking the navigation buttons
-					$pxs_next.bind('click.lax',function(){
+					$pxs_next.on('click.lax',function(){
 						data.current++;
 						if(data.current >= data.total_elems)
 							if(options.circular)
@@ -170,7 +175,7 @@
 						if (options.debug) console.log('next clicked: '+data.current);
 						$pxs_container.parallaxSlider('slide',data.current);
 					});
-					$pxs_prev.bind('click.lax',function(){
+					$pxs_prev.on('click.lax',function(){
 						data.current--;
 						if(data.current < 0)
 							if(options.circular)
@@ -193,9 +198,9 @@
 						});
 					}
 					//hovering the thumbs animates them up and down
-					data.thumbs.bind('mouseover.lax',function(){
+					data.thumbs.on('mouseover.lax', function(e){
 						$(this).stop().animate({top:options.thumbAnimate+'px'},options.thumbAnimateTime);
-					}).bind('mouseout.lax',function(){
+					}).on('mouseout.lax',function(){
 						$(this).stop().animate({top:'0px'}, options.thumbAnimateTime);
 					});
 							
@@ -236,6 +241,7 @@
 				});//end jquery.each
 			},//End init
 			stop: function  () {
+				
 				return this.each( function  () {
 					var $this = $(this),
 					data = $this.data('lax');
@@ -298,6 +304,15 @@
 						left	: slide_to/((k+1)*2)+'px'
 					},speed, options.easingBg);
 				});
+			}, 
+			/**
+			 * Destroys the slider, and resets the DOM
+			 */
+			destroy: function  () {
+				//This will get the data from the DOM element
+				//Then remove any added elements,
+				//And finally unbind all of our namespaced .lax events
+				console.error("TODO, implement destroy API")
 			}
 	}; //End Methods
 	
