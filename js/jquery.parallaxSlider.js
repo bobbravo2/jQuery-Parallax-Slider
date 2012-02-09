@@ -29,6 +29,8 @@
 					$.extend(options, userOptions);
 					var $pxs_container 	= $(this),
 					data = $pxs_container.data('lax');
+					//If the element has already been initialized, just return it.
+					if (data) return $pxs_container;
 					if (options.debug) {
 						console.group('jquery.parallax init');
 						console.log('settings',options);
@@ -64,8 +66,6 @@
 					//Prepare the loading state
 					$pxs_loading.show();
 					$pxs_slider_wrapper.hide();
-					//first preload all the images
-					var loaded		= 0;
 					//add data to DOM if not set
 					if (! data) {
 						$pxs_container.data('lax', {
@@ -94,7 +94,7 @@
 					data.buttons.pause.bind('click.lax', function  () {
 						$pxs_container.parallaxSlider('stop');
 						return false;
-						}).appendTo($pxs_actions);		 
+						}).appendTo($pxs_actions).hide();		 
 					if (options.debug) console.log('init data',data);
 					/*
 					 * Private method to resize the slider
@@ -164,18 +164,17 @@
 					});
 					//slide when clicking the navigation buttons
 					$pxs_next.on('click.lax',function(){
-						data.current++;
-						if(data.current >= data.total_elems)
-							if(options.circular)
-								data.current = 0;
-						else{
-							data.current--;
-							return false;
-						}
+						//if autoplay interrupt when user clicks
+						if(options.autoPlay)
+							$pxs_container.parallaxSlider('stop');
 						if (options.debug) console.log('next clicked: '+data.current);
-						$pxs_container.parallaxSlider('slide',data.current);
+//						data.current += 1;
+						$pxs_container.parallaxSlider('slide');
 					});
 					$pxs_prev.on('click.lax',function(){
+						//if autoplay interrupt when user clicks
+						if(options.autoPlay)
+							$pxs_container.parallaxSlider('stop');
 						data.current--;
 						if(data.current < 0)
 							if(options.circular)
@@ -239,9 +238,9 @@
 							}
 						});
 				});//end jquery.each
+				if (options.debug) console.groupEnd();
 			},//End init
 			stop: function  () {
-				
 				return this.each( function  () {
 					var $this = $(this),
 					data = $this.data('lax');
@@ -256,7 +255,7 @@
 			play: function  (playbutton) {
 				//If this is a play button triggered event
 				//Invoke a slide immediately for a more responsive "feel"
-				if (playbutton) $('.pxs_next',data.target).trigger('click.lax');
+				if (playbutton) $this.parallaxSlider('slide',data.current+1);
 				return this.each( function  () {
 					options.circular = true;
 					$this = $(this),
@@ -273,7 +272,8 @@
 					if (options.autoPlay == 0) options.autoPlay = 3000; //Default override for API invoked play
 					data.slideshow	= setInterval(function(){
 						if (options.debug) console.log('play interval tick');
-						$('.pxs_next',data.target).trigger('click.lax');
+						//TODO
+						$this.parallaxSlider('slide',undefined);
 					}, options.autoPlay);
 				});
 			},
@@ -284,16 +284,30 @@
 			slide: function  (slide,timing) {
 				$this = $(this),
 				data = $this.data('lax');
-				if (typeof(slide) != 'undefined') data.current = slide;
+				
+				
+				if (typeof(slide) == 'undefined') {
+					data.current++;
+					if(data.current >= data.total_elems)
+						if(options.circular)
+							data.current = 0;
+					else{
+						data.current--;
+						return false;
+					}
+					slide = data.current;
+				} else data.current = slide;
+				//If passed in timing is not undefined, allow it to override settings
 				if (typeof(timing) != 'undefined') speed = timing;
 				else speed = options.speed;
 				if (options.debug) {
-					console.log('slide called');
+					console.log('slide called. Current: ',data.current);
 					console.log(data);
 				}
 				$(".pxs_thumbnails LI",data.target).removeClass('selected');
 				$($(".pxs_thumbnails LI",data.target)[data.current]).addClass('selected');
 				var slide_to	= parseInt(-data.viewport_width * (slide));
+				console.log(slide_to);
 				//Animate the Slide
 				$('.pxs_slider',data.target).stop().animate({
 					left	: slide_to + 'px'
