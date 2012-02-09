@@ -33,7 +33,7 @@
 					//If the element has already been initialized, just return it.
 					if (data) return $pxs_container;
 					if (options.debug) {
-						console.group('jquery.parallax init');
+						console.group('jquery.parallax init'); 
 						console.log('settings',options);
 						if (options.speed > options.autoPlay) console.warn('Slide Transition duration should be shorter than automatic transitions');
 					}
@@ -273,7 +273,6 @@
 					if (options.autoPlay == 0) options.autoPlay = 3000; //Default override for API invoked play
 					data.slideshow	= setInterval(function(){
 						if (options.debug) console.log('play interval tick');
-						//TODO
 						$this.parallaxSlider('slide',undefined);
 					}, options.autoPlay);
 				});
@@ -284,7 +283,6 @@
 			 */
 			slide: function  (slide,timing) {
 				return this.each( function  () {
-
 				$this = $(this),
 				data = $this.data('lax');
 				if (typeof(slide) == 'undefined') {
@@ -308,7 +306,6 @@
 				$(".pxs_thumbnails LI",data.target).removeClass('selected');
 				$($(".pxs_thumbnails LI",data.target)[data.current]).addClass('selected');
 				var slide_to	= parseInt(-data.viewport_width * (slide));
-				console.log(slide_to);
 				//Animate the Slide
 				$('.pxs_slider',data.target).stop().animate({
 					left	: slide_to + 'px'
