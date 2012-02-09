@@ -19,6 +19,7 @@
 			thumbRotation	: 5,//(mixed): (int) degrees thumbs will be randomly rotated, bool false to disable rotation
 			thumbAnimate 	: -10, //(int) px to animate thumbnails
 			thumbAnimateTime: 100, //(int) ms animation for thumb animation
+			fadein: 1000, //(int) ms after images loaded fade in duration
 			numBackgrounds: 3, //(int) Number of parallax backgrounds
 			customBackground: false, //(string) Custom Background markup
 			debug: false //(bool) true: enable console statements for debugging
@@ -229,7 +230,7 @@
 							if(loaded	== data.total_elems) {
 								if (options.debug) console.log('all images loaded');
 								$pxs_loading.hide();
-								$pxs_slider_wrapper.fadeIn('slow', function() {
+								$pxs_slider_wrapper.fadeIn(options.fadein, function() {
 									if (options.autoPlay) {
 										$pxs_container.parallaxSlider('play');
 									}
@@ -282,10 +283,10 @@
 			 * @param slide int, slide number
 			 */
 			slide: function  (slide,timing) {
+				return this.each( function  () {
+
 				$this = $(this),
 				data = $this.data('lax');
-				
-				
 				if (typeof(slide) == 'undefined') {
 					data.current++;
 					if(data.current >= data.total_elems)
@@ -318,15 +319,27 @@
 						left	: slide_to/((k+1)*2)+'px'
 					},speed, options.easingBg);
 				});
+				});
 			}, 
 			/**
 			 * Destroys the slider, and resets the DOM
 			 */
 			destroy: function  () {
-				//This will get the data from the DOM element
-				//Then remove any added elements,
-				//And finally unbind all of our namespaced .lax events
-				console.error("TODO, implement destroy API")
+				return this.each( function  () {
+					$this = $(this),
+					data = $this.data('lax');
+					//Remove event delegation
+					$("*",data.target).off('.lax');
+					$.each(data.backgrounds, function  () {
+						$(this).remove();
+					});
+					$.each(data.buttons, function  () {
+						$(this).remove();
+					});
+					clearTimeout(data.slideshow);
+					$this.removeData('lax');
+					
+				});
 			}
 	}; //End Methods
 	
