@@ -28,22 +28,22 @@
 			init: function  (userOptions) {
 				return this.each(function() {
 					$.extend(options, userOptions);
-					var $pxs_container 	= $(this),
-					data = $pxs_container.data('lax');
+					var $this 	= $(this),
+					data = $this.data('lax');
 					//If the element has already been initialized, just return it.
-					if (data) return $pxs_container;
+					if (data) return;
 					if (options.debug) {
 						console.group('jquery.parallax init'); 
 						console.log('settings',options);
 						if (options.speed > options.autoPlay) console.warn('Slide Transition duration should be shorter than automatic transitions');
 					}
 					//the main slider
-					var $pxs_slider		= $('.pxs_slider',$pxs_container),
+					var $pxs_slider		= $('.pxs_slider',$this),
 					$elems			= $pxs_slider.children(),
 					total_elems		= $elems.length,
-					$pxs_next		= $('.pxs_next',$pxs_container),
-					$pxs_prev		= $('.pxs_prev',$pxs_container),
-					$pxs_bg		= $('.pxs_bg',$pxs_container),
+					$pxs_next		= $('.pxs_next',$this),
+					$pxs_prev		= $('.pxs_prev',$this),
+					$pxs_bg		= $('.pxs_bg',$this),
 					backgrounds = [];
 					for ( var int = options.numBackgrounds; int > 0; int--) {
 						var $bkg = $('<div class="pxs_bg'+int+'"></div>');
@@ -55,102 +55,54 @@
 						$(options.customBackground).appendTo($pxs_bg);
 					}
 					//the thumbs container
-					$pxs_thumbnails = $('.pxs_thumbnails',$pxs_container),
+					$pxs_thumbnails = $('.pxs_thumbnails',$this),
 					//the thumbs
 					$thumbs			= $pxs_thumbnails.children(),
 					//the loading image
-					$pxs_loading	= $('.pxs_loading',$pxs_container),
-					$pxs_slider_wrapper = $('.pxs_slider_wrapper',$pxs_container),
+					$pxs_loading	= $('.pxs_loading',$this),
+					$pxs_slider_wrapper = $('.pxs_slider_wrapper',$this),
 					$pxs_actions = $("<span class=\"pxs_actions\"></span>"), 
 					$one_img = $($pxs_slider.find('img')[0]);
-					$pxs_actions.appendTo($pxs_container);
+					$pxs_actions.appendTo($this);
 					//Prepare the loading state
 					$pxs_loading.show();
 					$pxs_slider_wrapper.hide();
 					//add data to DOM if not set
 					if (! data) {
-						$pxs_container.data('lax', {
-							target: $pxs_container,
+						$this.data('lax', {
+							target: $this,
+							slider: $pxs_slider,
+							elems: $elems,
 							total_elems: total_elems,
 							backgrounds: backgrounds,
-							buttons: {	play: $("<span class=\"pxs_play\">Play</span>"), 
-											pause: $("<span class=\"pxs_pause\">Pause</span>") },
+							buttons: {		play: $("<span class=\"pxs_play\">Play</span>"),
+											pause: $("<span class=\"pxs_pause\">Pause</span>"),
+											prev: $pxs_prev,
+											next: $pxs_next
+											},
 							current: 0,
 							slideshow:-1,
 							one_image_w: $one_img.width(),
 							image_aspect: $one_img.width()/$one_img.height(),
 							nav_offset: parseInt( $(".pxs_navigation SPAN").css('width') ) + parseInt( $("UL.pxs_slider LI IMG").css('border-left-width')),
 							w_w: $(window).width(),
-							viewport_width: $pxs_container.width(),
+							viewport_width: $this.width(),
 							images:$elems.find('IMG'),
+							thumbs_container:$pxs_thumbnails,
 							thumbs: $thumbs
 						});
-						data = $pxs_container.data('lax');
+						data = $this.data('lax');
 					}
 					//Set up the play/pause buttons
 					data.buttons.play.bind('click.lax', function  () {
-						$pxs_container.parallaxSlider('play',true);
+						$this.parallaxSlider('play',true);
 						return false;
 						}).appendTo($pxs_actions);		 
 					data.buttons.pause.bind('click.lax', function  () {
-						$pxs_container.parallaxSlider('stop');
+						$this.parallaxSlider('stop');
 						return false;
 						}).appendTo($pxs_actions).hide();		 
 					if (options.debug) console.log('init data',data);
-					/*
-					 * Private method to resize the slider
-					 */
-					function _setWidths() {
-						var position_nav	= 0,
-						nav_top = 0;
-						if (options.debug) console.log('setwidth called');
-						//each element will have a width = windows width
-						$elems.css({
-							width: data.viewport_width + 'px'
-						});
-						if (data.viewport_width < (data.one_image_w + data.nav_offset*2)) {
-							//Viewport is wider than images + nav
-							var width = data.viewport_width - data.nav_offset*2,
-							height = parseInt(width/data.image_aspect),
-							nav_top = (height/2) + ($pxs_next.height()/4);
-							var images_css_object = {width: width+'px',height:height+'px'};
-						} else {
-							//Images are larger than viewport
-							var position_nav	= (data.viewport_width/2) - (data.one_image_w/2) - data.nav_offset;
-							nav_top = ((data.one_image_w / data.image_aspect) / 2) + ($pxs_next.height()/4);
-							var images_css_object = {width: data.one_image_w+'px',height:(data.one_image_w/data.image_aspect)+'px'};
-						}
-						data.images.css(images_css_object);
-						if (options.debug) {
-							console.log('slider viewport width',data.viewport_width);
-							console.log('images_css_object',images_css_object);
-							console.log('nav_top', nav_top);
-							console.log('position nav',position_nav);
-						}
-						//Space the thumbs
-						data.thumbs.each(function(i){
-							var $this 	= $(this);
-							//set the left offset to current thumb index *
-							var left = 0,
-							thumbwidth = $this.width(),
-							thumbspace = thumbwidth * data.total_elems,
-							offset = (data.viewport_width - thumbspace) / (data.total_elems + 1);
-							if (i==0) left = offset;
-							else left	= ((i+1) * offset) + (i * thumbwidth);
-							$this.css('left',left+'px');
-						});
-						//Position the Thumbnail Container 
-						$pxs_thumbnails.css({
-							'width'			: data.viewport_width + 'px',
-							'margin-left' 	: -data.viewport_width/2 + 'px'
-						});
-						$pxs_next.css('right', position_nav + 'px');
-						$pxs_prev.css('left', position_nav + 'px');
-						$pxs_next.add($pxs_prev).css('top',nav_top + 'px');
-						var pxs_slider_w	= data.viewport_width * data.total_elems;
-						//Set the widths of all backgrounds and the slider
-						$pxs_slider.add(backgrounds).width(pxs_slider_w + 'px');
-					}
 					
 					/*
 					clicking a thumb will slide to the respective image
@@ -159,23 +111,23 @@
 						var $thumb	= $(this);
 						//if autoplay interrupt when user clicks
 						if(options.autoPlay)
-							$pxs_container.parallaxSlider('stop');
+							$this.parallaxSlider('stop');
 						data.current = $thumb.index();
-						$pxs_container.parallaxSlider('slide',$thumb.index());
+						$this.parallaxSlider('slide',$thumb.index());
 					});
 					//slide when clicking the navigation buttons
 					$pxs_next.on('click.lax',function(){
 						//if autoplay interrupt when user clicks
 						if(options.autoPlay)
-							$pxs_container.parallaxSlider('stop');
+							$this.parallaxSlider('stop');
 						if (options.debug) console.log('next clicked: '+data.current);
 //						data.current += 1;
-						$pxs_container.parallaxSlider('slide');
+						$this.parallaxSlider('slide');
 					});
 					$pxs_prev.on('click.lax',function(){
 						//if autoplay interrupt when user clicks
 						if(options.autoPlay)
-							$pxs_container.parallaxSlider('stop');
+							$this.parallaxSlider('stop');
 						data.current--;
 						if(data.current < 0)
 							if(options.circular)
@@ -185,7 +137,7 @@
 							return false;
 						}
 						if (options.debug) console.log('prev clicked: '+data.current);
-						$pxs_container.parallaxSlider('slide',data.current);
+						$this.parallaxSlider('slide',data.current);
 					});
 							
 					if(options.thumbRotation){
@@ -207,18 +159,9 @@
 					//make the first thumb selected
 					$($(".pxs_thumbnails LI",data.target)[0]).addClass('selected');
 							
-					/*
-					when resizing the window,
-					we need to recalculate the widths of the
-					slider elements, based on the new windows width.
-					we need to slide again to the current one,
-					since the left of the slider is no longer correct
-					 */
-					$(window).resize(function(){
-						data.w_w = $(window).width();
-						data.viewport_width = $pxs_container.width();
-						_setWidths();
-						$pxs_container.parallaxSlider('slide',data.current,0);
+					$(window).on('resize.lax', function(){
+						$this.parallaxSlider('refresh');
+						$this.parallaxSlider('slide',data.current,0);
 					});
 					/*
 					 * Make sure all images have been loaded
@@ -232,10 +175,10 @@
 								$pxs_loading.hide();
 								$pxs_slider_wrapper.fadeIn(options.fadein, function() {
 									if (options.autoPlay) {
-										$pxs_container.parallaxSlider('play');
+										$this.parallaxSlider('play');
 									}
 								});
-								_setWidths();
+								$this.parallaxSlider('refresh');
 							}
 						});
 				});//end jquery.each
@@ -285,6 +228,7 @@
 				return this.each( function  () {
 				$this = $(this),
 				data = $this.data('lax');
+				if (!data) return;
 				if (typeof(slide) == 'undefined') {
 					data.current++;
 					if(data.current >= data.total_elems)
@@ -318,6 +262,67 @@
 				});
 				});
 			}, 
+			/**
+			 * refresh the width of the slider and elements
+			 * @returns jQuery
+			 */
+			refresh: function  () {
+				return this.each( function  () {
+					var $this = $(this),
+					data = $this.data('lax');
+					var position_nav = 0,
+					nav_top = 0;
+					data.w_w = $(window).width();
+					data.viewport_width = $this.width();
+					if (options.debug) console.log('refresh called');
+					//each element will have a width = windows width
+					data.elems.css({
+						width: data.viewport_width + 'px'
+					});
+					if (data.viewport_width < (data.one_image_w + data.nav_offset*2)) {
+						//Viewport is wider than images + nav
+						var width = data.viewport_width - data.nav_offset*2,
+						height = parseInt(width/data.image_aspect),
+						nav_top = (height/2) + (data.buttons.next.height()/4);
+						var images_css_object = {width: width+'px',height:height+'px'};
+					} else {
+						//Images are larger than viewport
+						var position_nav	= (data.viewport_width/2) - (data.one_image_w/2) - data.nav_offset;
+						nav_top = ((data.one_image_w / data.image_aspect) / 2) + (data.buttons.next.height()/4);
+						var images_css_object = {width: data.one_image_w+'px',height:(data.one_image_w/data.image_aspect)+'px'};
+					}
+					data.images.css(images_css_object);
+					if (options.debug) {
+						console.log('slider viewport width',data.viewport_width);
+						console.log('images_css_object',images_css_object);
+						console.log('nav_top', nav_top);
+						console.log('position nav',position_nav);
+					}
+					//Space the thumbs
+					data.thumbs.each(function(i){
+						var $thumb 	= $(this);
+						//set the left offset to current thumb index *
+						var left = 0,
+						thumbwidth = $thumb.width(),
+						thumbspace = thumbwidth * data.total_elems,
+						offset = (data.viewport_width - thumbspace) / (data.total_elems + 1);
+						if (i==0) left = offset;
+						else left	= ((i+1) * offset) + (i * thumbwidth);
+						$thumb.css('left',left+'px');
+					});
+					//Position the Thumbnail Container 
+					data.thumbs_container.css({
+						'width'			: data.viewport_width + 'px',
+						'margin-left' 	: -data.viewport_width/2 + 'px'
+					});
+					data.buttons.next.css('right', position_nav + 'px');
+					data.buttons.prev.css('left', position_nav + 'px');
+					data.buttons.next.add(data.buttons.prev).css('top',nav_top + 'px');
+					var pxs_slider_w	= data.viewport_width * data.total_elems;
+					//Set the widths of all backgrounds and the slider
+					data.slider.add(data.backgrounds).width(pxs_slider_w + 'px');
+				});
+			},
 			/**
 			 * Destroys the slider, and resets the DOM
 			 */
