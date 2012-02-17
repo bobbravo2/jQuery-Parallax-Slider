@@ -3,9 +3,7 @@
  * Version 1.1.7
  * Please fork on github!
  * @author Circle Tree, LLC
- * @TODO fix prev/next click not resetting timeout or clearing it altogether
  * @TODO fix options thumbnails disabled
- * @TODO test circular function
  * @TODO check width of each slider and thumbnail, to allow for unique widths
  */
 (function($) {
@@ -168,8 +166,8 @@
 					 * Check height is defined for IE compatibility
 					 */
 					var loaded = 0;
-					data.images.each( function  () {
-						if (data.images.css('height')) loaded++;
+						$(data.images).on('load', function  () {
+							loaded++;
 							if(loaded	== data.total_elems) {
 								if (options.debug) console.log('all images loaded');
 								$pxs_loading.hide();
