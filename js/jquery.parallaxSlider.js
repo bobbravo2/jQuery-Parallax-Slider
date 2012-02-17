@@ -217,7 +217,7 @@
 					data.slideshow	= setInterval(function(){
 						if (options.debug) console.log('play interval tick');
 						$this.parallaxSlider('slide',undefined);
-					}, options.autoPlay);
+					}, options.autoPlay + options.speed);
 				});
 			},
 			/**
