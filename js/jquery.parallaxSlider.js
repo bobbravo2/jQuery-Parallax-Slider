@@ -1,8 +1,14 @@
 /**
- * Parallax Slider
- * Version 1.1.7
+ * jquery.imagesloaded
+ */
+(function(b){var j="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";b.fn.imagesLoaded=function(k){function l(){var c=b(h),a=b(g);d&&(g.length?d.reject(e,c,a):d.resolve(e));b.isFunction(k)&&k.call(f,e,c,a)}function m(c){var a=c.target;a.src===j||-1!==b.inArray(a,i)||(i.push(a),"error"===c.type?g.push(a):h.push(a),b.data(a,"imagesLoaded",{event:c.type,src:a.src}),o&&d.notify(e.length,i.length,h.length,g.length),0>=--n&&(setTimeout(l),e.unbind(".imagesLoaded",m)))}var f=this,
+d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img").add(f.filter("img")),n=e.length,i=[],h=[],g=[];n||l();e.bind("load.imagesLoaded error.imagesLoaded",m).each(function(){var c=this.src,a=b.data(this,"imagesLoaded");a&&a.src===c?b(this).triggerHandler(a.event):(this.src=j,this.src=c)});return d?d.promise(f):f}})(jQuery);
+/**
+ * jQuery Parallax Image Slider
+ * Version 1.2.0
  * Please fork on github!
  * @author Circle Tree, LLC
+ * @depends imagesloaded https://github.com/desandro/imagesloaded
  * @TODO fix options thumbnails disabled
  * @TODO check width of each slider and thumbnail, to allow for unique widths
  */
@@ -10,8 +16,8 @@
 	var options = {
 			autoPlay			: 3000,//(mixed) (bool) false to disable, (int) duration to hold between slides in ms
 			speed			: 1000,//(int) speed of each slide animation in ms
-			easingBg		: 'easeInOutQuart',//(string) easing effect for the background animation
-			easing			: 'easeInOutQuart',//(string) easing effect for the slide animation
+			easing			: 'swing',//(string) easing effect for the animation
+			easingCSS3		: 'ease',//(string) easing CSS3 for the animation
 			circular		: true,//(bool) true, will repeat, false, will stop at the end
 			thumbs			: true,// (bool) true enables thumbnails, false disables
 			thumbRotation	: 5,//(mixed): (int) degrees thumbs will be randomly rotated, bool false to disable rotation
@@ -29,7 +35,7 @@
 					var $this 	= $(this),
 					data = $this.data('lax');
 					//If the element has already been initialized, just return it.
-					if (data) return;
+					if (data) return $this;
 					if (options.debug) {
 						console.group('jquery.parallax init'); 
 						console.log('settings',options);
@@ -43,8 +49,26 @@
 					$pxs_prev		= $('.pxs_prev',$this),
 					$pxs_bg		= $('.pxs_bg',$this),
 					backgrounds = [];
+					
+					//Check if Modernizr is in the DOM
+					if (typeof(Modernizr)=='undefined') Modernizr=false;
+					if (Modernizr.csstransitions) {
+						var speed_string = options.speed / 1000+'s',
+						css_transitions_object = 
+							{
+								'-webkit-transition':'left '+speed_string+' '+options.easingCSS3,
+								'-moz-transition':'left '+speed_string+' '+options.easingCSS3,
+								'-o-transition':'left '+speed_string+' '+options.easingCSS3,
+								'-ms-transition':'left '+speed_string+' '+options.easingCSS3,
+								'transition':'left '+speed_string+' '+options.easingCSS3,
+							};
+						$pxs_slider.css(css_transitions_object);
+						
+					}
+					//Build Backgrounds
 					for ( var int = options.numBackgrounds; int > 0; int--) {
 						var $bkg = $('<div class="pxs_bg'+int+'"></div>');
+						if (Modernizr.csstransitions) $bkg.css(css_transitions_object);
 						$bkg.appendTo($pxs_bg);
 						backgrounds[int] = $bkg;
 					}
@@ -63,13 +87,14 @@
 					$one_img = $($pxs_slider.find('img')[0]);
 					$pxs_actions.appendTo($this);
 					//Prepare the loading state
-					$pxs_loading.show();
+					$pxs_loading.show().append('<span class="percent">0%</span>') ;
 					$pxs_slider_wrapper.hide();
 					//add data to DOM if not set
 					if (! data) {
 						$this.data('lax', {
 							target: $this,
 							slider: $pxs_slider,
+							options: options,
 							elems: $elems,
 							total_elems: total_elems,
 							backgrounds: backgrounds,
@@ -87,32 +112,22 @@
 							viewport_width: $this.width(),
 							images:$elems.find('IMG'),
 							thumbs_container:$pxs_thumbnails,
-							thumbs: $thumbs
+							thumbs: $thumbs,
 						});
 						data = $this.data('lax');
 					}
 					//Set up the play/pause buttons
-					data.buttons.play.bind('click.lax', function  () {
+					data.buttons.play.on('click.lax', function  () {
 						$this.parallaxSlider('play',true);
 						return false;
 						}).appendTo($pxs_actions);		 
-					data.buttons.pause.bind('click.lax', function  () {
+					data.buttons.pause.on('click.lax', function  () {
 						$this.parallaxSlider('stop');
 						return false;
 						}).appendTo($pxs_actions).hide();		 
 					if (options.debug) console.log('init data',data);
 					
-					/*
-					clicking a thumb will slide to the respective image
-					 */
-					data.thumbs.bind('click.lax',function(){
-						var $thumb	= $(this);
-						//if autoplay interrupt when user clicks
-						if(options.autoPlay)
-							$this.parallaxSlider('stop');
-						data.current = $thumb.index();
-						$this.parallaxSlider('slide',$thumb.index());
-					});
+					
 					//slide when clicking the navigation buttons
 					$pxs_next.on('click.lax',function(){
 						//if autoplay interrupt when user clicks
@@ -137,49 +152,61 @@
 						if (options.debug) console.log('prev clicked: '+data.current);
 						$this.parallaxSlider('slide',data.current);
 					});
-							
-					if(options.thumbRotation){
-						var angle 	= Math.floor(Math.random()*(2*options.thumbRotation))-(options.thumbRotation);
-						data.thumbs.css({
-							'-o-transform'	: 'rotate('+ angle +'deg)',
-							'-moz-transform'	: 'rotate('+ angle +'deg)',
-							'-webkit-transform'	: 'rotate('+ angle +'deg)',
-							'transform'			: 'rotate('+ angle +'deg)'
+					//Only do this if thumbnails are enabled
+					if (options.thumbs) {
+						
+						//hovering the thumbs animates them up and down
+						data.thumbs.on('mouseover.lax', function(e){
+							$(this).stop().animate({top:options.thumbAnimate+'px'},options.thumbAnimateTime);
+						}).on('mouseout.lax',function(){
+							$(this).stop().animate({top:'0px'}, options.thumbAnimateTime);
+						}).on('click.lax',function(){
+							var $thumb	= $(this);
+							//if autoplay interrupt when user clicks
+							if(options.autoPlay)
+								$this.parallaxSlider('stop');
+							data.current = $thumb.index();
+							$this.parallaxSlider('slide',$thumb.index());
 						});
+						
+						//make the first thumb selected
+						$($(".pxs_thumbnails LI",data.target)[0]).addClass('selected');
+						//use CSS3 rotation if enabled
+						if(options.thumbRotation){
+							var angle 	= Math.floor(Math.random()*(2*options.thumbRotation))-(options.thumbRotation);
+							data.thumbs.css({
+								'-o-transform'	: 'rotate('+ angle +'deg)',
+								'-moz-transform'	: 'rotate('+ angle +'deg)',
+								'-webkit-transform'	: 'rotate('+ angle +'deg)',
+								'transform'			: 'rotate('+ angle +'deg)'
+							});
+						}
+
+					} else {
+						//Hide any thumbs in the DOM
+						data.thumbs.hide();
 					}
-					//hovering the thumbs animates them up and down
-					data.thumbs.on('mouseover.lax', function(e){
-						$(this).stop().animate({top:options.thumbAnimate+'px'},options.thumbAnimateTime);
-					}).on('mouseout.lax',function(){
-						$(this).stop().animate({top:'0px'}, options.thumbAnimateTime);
-					});
-							
-					//make the first thumb selected
-					$($(".pxs_thumbnails LI",data.target)[0]).addClass('selected');
-							
 					$(window).on('resize.lax', function(){
 						$this.parallaxSlider('refresh');
 						$this.parallaxSlider('slide',data.current,0);
 					});
 					/*
-					 * Make sure all images have been loaded
-					 * Check height is defined for IE compatibility
+					 * Make sure all images have been loaded using imagesLoaded jQuery plugin
 					 */
-					var loaded = 0;
-						$(data.images).on('load', function  () {
-							loaded++;
-							if(loaded	== data.total_elems) {
-								if (options.debug) console.log('all images loaded');
-								$pxs_loading.hide();
-								$pxs_slider_wrapper.fadeIn(options.fadein, function() {
-									if (options.autoPlay) {
-										$this.parallaxSlider('play');
-									}
-								});
-								$this.parallaxSlider('refresh');
+					var loaded = $this.find("IMG").imagesLoaded(), percent = $pxs_loading.find('.percent');
+					loaded.progress( function  (total,loaded,proper,broken) {
+						percent.html(( Math.round( ( loaded * 100 ) / total ) ) + '%' );
+					}).always( function  (images) {
+						$pxs_loading.hide();
+						$pxs_slider_wrapper.fadeIn(options.fadein, function() {
+							if (options.autoPlay) {
+								$this.parallaxSlider('play');
 							}
 						});
-				});//end jquery.each
+						$this.parallaxSlider('refresh');
+					});
+						
+				});//end jquery.each for init
 				if (options.debug) console.groupEnd();
 			},//End init
 			stop: function  () {
@@ -197,7 +224,7 @@
 			play: function  (playbutton) {
 				//If this is a play button triggered event
 				//Invoke a slide immediately for a more responsive "feel"
-				if (playbutton) $this.parallaxSlider('slide',data.current+1);
+				if (playbutton) $this.parallaxSlider('slide');
 				return this.each( function  () {
 					options.circular = true;
 					$this = $(this),
@@ -237,7 +264,9 @@
 						return false;
 					}
 					slide = data.current;
-				} else data.current = slide;
+				} else {
+						data.current = slide;
+				}
 				//If passed in timing is not undefined, allow it to override settings
 				if (typeof(timing) != 'undefined') speed = timing;
 				else speed = options.speed;
@@ -247,17 +276,30 @@
 				}
 				$(".pxs_thumbnails LI",data.target).removeClass('selected');
 				$($(".pxs_thumbnails LI",data.target)[data.current]).addClass('selected');
-				var slide_to	= parseInt(-data.viewport_width * (slide));
+				var slide_to	= parseInt(-data.viewport_width * (slide)),
+				animCssObject = {
+						left	: slide_to + 'px'
+				};
 				//Animate the Slide
-				$('.pxs_slider',data.target).stop().animate({
-					left	: slide_to + 'px'
-				},speed, options.easing);
-				//Animate the Background Layers
-				$.each(data.backgrounds, function (k,v) {
-					$(v).stop().animate({
-						left	: slide_to/((k+1)*2)+'px'
-					},speed, options.easingBg);
-				});
+				if (Modernizr.cssanimations ) {
+					if (options.debug) console.log('using css animations');
+					$('.pxs_slider',data.target).css(animCssObject);
+					$.each(data.backgrounds, function (k,v) {
+						$(v).css({
+							left	: slide_to/((k+1)*2)+'px'
+						});
+					});
+				} else {
+					if (options.debug) console.log('using fallback animations');
+					//use fallback
+					$('.pxs_slider',data.target).stop().animate(animCssObject,speed, options.easing);
+					//Animate the Background Layers
+					$.each(data.backgrounds, function (k,v) {
+						$(v).stop().animate({
+							left	: slide_to/((k+1)*2)+'px'
+						},speed, options.easing);
+					});
+				}
 				});
 			}, 
 			/**

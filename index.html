@@ -5,25 +5,22 @@
 <link rel="stylesheet" type="text/css" href="style.css" />
 <!-- 
 <script type="text/javascript" src="https://getfirebug.com/firebug-lite.js"></script>
- -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js" language="javascript"></script>
 <script src="js/jquery.easing.js" language="javascript"></script>
+ -->
+<script src="js/modernizr.js" language="javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js" language="javascript"></script>
 <script src="js/jquery.parallaxSlider.js" language="javascript"></script>
 <script type="text/javascript">
-
 jQuery(document).ready(function($){
-	var easing = 'jswing';
+	var easing = 'swing';
 	$("#slider").parallaxSlider({
-		autoPlay:3000,//false to disable, otherwise int duration in ms hold between slides
-		speed:2200, //transition duration between slides
-		easing: easing,
-		easingBg: easing,
+		autoPlay:500,//false to disable, otherwise int duration in ms hold between slides
+		speed:2000, //transition duration between slides
+		easing: 'swing',
+		easingCSS3: 'cubic-bezier(0.2,0,0.5,0.8)',
 		numBackgrounds: 3,
 		thumbRotation:false,
-		/* debug:true, */
-		thumbs:false,
-		circular:false
-		
+		//debug:true,
 	});
 })
 
