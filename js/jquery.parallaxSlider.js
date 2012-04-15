@@ -17,6 +17,7 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 			autoPlay			: 3000,//(mixed) (bool) false to disable, (int) duration to hold between slides in ms
 			speed			: 1000,//(int) speed of each slide animation in ms
 			easing			: 'swing',//(string) easing effect for the animation
+			css3			: false, //(bool) enable CSS3 transitions?
 			easingCSS3		: 'ease',//(string) easing CSS3 for the animation
 			circular		: true,//(bool) true, will repeat, false, will stop at the end
 			thumbs			: true,// (bool) true enables thumbnails, false disables
@@ -52,7 +53,7 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 					
 					//Check if Modernizr is in the DOM
 					if (typeof(Modernizr)=='undefined') Modernizr=false;
-					if (Modernizr.csstransitions) {
+					if (Modernizr.csstransitions && options.css3 ) {
 						var speed_string = options.speed / 1000+'s',
 						css_transitions_object = 
 							{
@@ -68,7 +69,7 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 					//Build Backgrounds
 					for ( var int = options.numBackgrounds; int > 0; int--) {
 						var $bkg = $('<div class="pxs_bg'+int+'"></div>');
-						if (Modernizr.csstransitions) $bkg.css(css_transitions_object);
+						if (Modernizr.csstransitions && options.css3) $bkg.css(css_transitions_object);
 						$bkg.appendTo($pxs_bg);
 						backgrounds[int] = $bkg;
 					}
@@ -281,7 +282,7 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 						left	: slide_to + 'px'
 				};
 				//Animate the Slide
-				if (Modernizr.cssanimations ) {
+				if (Modernizr.cssanimations && options.css3) {
 					if (options.debug) console.log('using css animations');
 					$('.pxs_slider',data.target).css(animCssObject);
 					$.each(data.backgrounds, function (k,v) {
