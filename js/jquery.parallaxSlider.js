@@ -140,7 +140,6 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 						if(options.autoPlay)
 							$this.parallaxSlider('stop');
 						if (options.debug) console.log('next clicked: '+data.current);
-//						data.current += 1;
 						$this.parallaxSlider('slide');
 					});
 					$pxs_prev.on('click.lax',function(){
@@ -193,28 +192,17 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 						data.thumbs.hide();
 					}
 					//Delegate window event handlers
-					$(window).on('resize.lax hashchange.lax', function(e){
+					$(window).on('resize.lax', function(e){
 						//Resize 
-						if (e.type == 'resize') {
-							$this.parallaxSlider('slide',data.current,0);
-							$this.parallaxSlider('refresh');
-						} else if (e.type == 'hashchange') {
-							var slide_int = parseInt(window.location.hash.replace('#slide',''));
-							if (typeof(slide_int) == 'number') {
-								if (e.isTrigger) {
-									//This is being triggered below by the init 
-									$this.parallaxSlider('slide',slide_int,0);
-								} else {
-									//This is a history event (back, forward) so use the animation!
-									$this.parallaxSlider('slide',slide_int);
-								}
-							}
-						}
+						$this.parallaxSlider('slide',data.current,0);
+						$this.parallaxSlider('refresh');
 					});
 					//Trigger hash change if enabled
 					if (options.hash) {
-						//Use hashchange event to load the slide
-						$(window).trigger('hashchange');
+						var slide_int = parseInt(window.location.hash.replace('#slide',''));
+						if (typeof(slide_int) == 'number') {
+								$this.parallaxSlider('slide',slide_int,0);
+						}
 					}
 					/*
 					 * Make sure all images have been loaded using imagesLoaded jQuery plugin
@@ -308,7 +296,8 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 						left	: slide_to + 'px'
 				};
 				//Update the history hash
-				window.location.hash = 'slide'+slide;
+				if (isNaN(slide)) slide = 0;
+				window.location.replace('#slide'+slide);
 				//Animate the Slide
 				if (Modernizr.cssanimations && options.css3) {
 					if (options.debug) console.log('using css animations');
