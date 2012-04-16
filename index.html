@@ -17,7 +17,6 @@ jQuery(document).ready(function($){
 		autoPlay:500,//false to disable, otherwise int duration in ms hold between slides
 		speed:2000, //transition duration between slides
 		easing: 'swing',
-		easingCSS3: 'cubic-bezier(0.2,0,0.5,0.8)',
 		numBackgrounds: 3,
 		thumbRotation:false,
 		//debug:true,
@@ -80,7 +79,8 @@ jQuery(document).ready(function($){
 </div>	
 <div id="content">
 <h1>jQuery Parallax Slider</h1>
-<p>New in 1.1.7  requires jQuery 1.7 for event delegation.</p>
+<p>An awesome, responsive jQuery parallax slider.</p>
+<p>New in 1.3.0 History Support Ñ watch the slide you're currently on, and <a href="page.html">click here</a>, and then go back to this page &mdash; voila! the same slide is shown!</p>
 <h2>Default options:</h2>
 <code><pre>
 var options = {
@@ -99,7 +99,12 @@ var options = {
 		};
 </pre>
 </code>
-Based off of <a target="_blank" href="http://tympanus.net/codrops/2011/01/03/parallax-slider/">Mary Lou's jQuery Parallax Slider Demo</a>
+<h3>Changelog</h3>
+<ul>
+	<li>1.3.0 - Added history hash support to enable dynamically loading the last seen slide for a more consistent UX</li>
+	<li>1.2.0 - refactored image loading using jquery.imagesloaded plugin for cross browser compat, and percentage of load indicators</li>
+	<li>1.1.7 - requires jQuery 1.7 for event delegation.</li>
+</ul>
 </div>
 </body>
 </html>

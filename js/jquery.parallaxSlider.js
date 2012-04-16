@@ -15,16 +15,18 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 (function($) {
 	var options = {
 			autoPlay			: 3000,//(mixed) (bool) false to disable, (int) duration to hold between slides in ms
-			speed			: 1000,//(int) speed of each slide animation in ms
-			easing			: 'swing',//(string) easing effect for the animation
-			css3			: false, //(bool) enable CSS3 transitions?
-			easingCSS3		: 'ease',//(string) easing CSS3 for the animation
 			circular		: true,//(bool) true, will repeat, false, will stop at the end
+			css3			: false, //(bool) enable CSS3 transitions?
+			css3Easing		: 'ease',//(string) easing CSS3 for the animation
+			easing			: 'swing',//(string) easing effect for the animation
+			easingBg		: 'swing',//(string) easing effect for the background animation
+			fadein: 1000, //(int) ms after images loaded fade in duration
+			hash			: true, //(bool) use hashes to track the current slide in history
+			speed			: 1000,//(int) speed of each slide animation in ms
 			thumbs			: true,// (bool) true enables thumbnails, false disables
 			thumbRotation	: 5,//(mixed): (int) degrees thumbs will be randomly rotated, bool false to disable rotation
 			thumbAnimate 	: -10, //(int) px to animate thumbnails
 			thumbAnimateTime: 100, //(int) ms animation for thumb animation
-			fadein: 1000, //(int) ms after images loaded fade in duration
 			numBackgrounds: 3, //(int) Number of parallax backgrounds
 			customBackground: false, //(string) Custom Background markup
 			debug: false //(bool) true: enable console statements for debugging
@@ -49,7 +51,7 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 					$pxs_next		= $('.pxs_next',$this),
 					$pxs_prev		= $('.pxs_prev',$this),
 					$pxs_bg		= $('.pxs_bg',$this),
-					backgrounds = [];
+					backgrounds = new Array();
 					
 					//Check if Modernizr is in the DOM
 					if (typeof(Modernizr)=='undefined') Modernizr=false;
@@ -57,11 +59,11 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 						var speed_string = options.speed / 1000+'s',
 						css_transitions_object = 
 							{
-								'-webkit-transition':'left '+speed_string+' '+options.easingCSS3,
-								'-moz-transition':'left '+speed_string+' '+options.easingCSS3,
-								'-o-transition':'left '+speed_string+' '+options.easingCSS3,
-								'-ms-transition':'left '+speed_string+' '+options.easingCSS3,
-								'transition':'left '+speed_string+' '+options.easingCSS3,
+								'-webkit-transition':'left '+speed_string+' '+options.css3Easing,
+								'-moz-transition':'left '+speed_string+' '+options.css3Easing,
+								'-o-transition':'left '+speed_string+' '+options.css3Easing,
+								'-ms-transition':'left '+speed_string+' '+options.css3Easing,
+								'transition':'left '+speed_string+' '+options.css3Easing,
 							};
 						$pxs_slider.css(css_transitions_object);
 						
@@ -73,6 +75,9 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 						$bkg.appendTo($pxs_bg);
 						backgrounds[int] = $bkg;
 					}
+					
+					//Fix for an undefined first array element
+					if (typeof(backgrounds[0]) == 'undefined') backgrounds.shift();
 					
 					if (options.customBackground) {
 						$(options.customBackground).appendTo($pxs_bg);
@@ -191,6 +196,12 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 						$this.parallaxSlider('refresh');
 						$this.parallaxSlider('slide',data.current,0);
 					});
+					//Check if a valid slide integer has been passed in the hash
+					var slide_int = parseInt(window.location.hash.replace('#slide',''));
+					if (options.hash && ( typeof(slide_int) == 'number' )) {
+						console.log('slide',slide_int);
+						$this.parallaxSlider('slide',slide_int,0);
+					}
 					/*
 					 * Make sure all images have been loaded using imagesLoaded jQuery plugin
 					 */
@@ -200,6 +211,7 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 					}).always( function  (images) {
 						$pxs_loading.hide();
 						$pxs_slider_wrapper.fadeIn(options.fadein, function() {
+							//if autoplay is enabled, trigger play action at the end of the animation
 							if (options.autoPlay) {
 								$this.parallaxSlider('play');
 							}
@@ -233,7 +245,7 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 					if (options.debug) {
 						console.log('play called on',$this);
 						console.log('play data ',data);
-						console.log('typeof data.slideshow',typeof(data.slideshow));
+						console.log('typeof data.slideshow', typeof(data.slideshow) );
 						console.log('data.slideshow',data.slideshow);
 					}
 					//Toggle the buttons
@@ -277,10 +289,11 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 				}
 				$(".pxs_thumbnails LI",data.target).removeClass('selected');
 				$($(".pxs_thumbnails LI",data.target)[data.current]).addClass('selected');
-				var slide_to	= parseInt(-data.viewport_width * (slide)),
+				var slide_to	= parseInt( -data.viewport_width * slide ),
 				animCssObject = {
 						left	: slide_to + 'px'
 				};
+				window.location.hash = 'slide'+slide;
 				//Animate the Slide
 				if (Modernizr.cssanimations && options.css3) {
 					if (options.debug) console.log('using css animations');
@@ -298,7 +311,7 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 					$.each(data.backgrounds, function (k,v) {
 						$(v).stop().animate({
 							left	: slide_to/((k+1)*2)+'px'
-						},speed, options.easing);
+						},speed, options.easingBg);
 					});
 				}
 				});
