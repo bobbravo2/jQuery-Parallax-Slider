@@ -192,15 +192,29 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 						//Hide any thumbs in the DOM
 						data.thumbs.hide();
 					}
-					$(window).on('resize.lax', function(){
-						$this.parallaxSlider('refresh');
-						$this.parallaxSlider('slide',data.current,0);
+					//Delegate window event handlers
+					$(window).on('resize.lax hashchange.lax', function(e){
+						//Resize 
+						if (e.type == 'resize') {
+							$this.parallaxSlider('slide',data.current,0);
+							$this.parallaxSlider('refresh');
+						} else if (e.type == 'hashchange') {
+							var slide_int = parseInt(window.location.hash.replace('#slide',''));
+							if (typeof(slide_int) == 'number') {
+								if (e.isTrigger) {
+									//This is being triggered below by the init 
+									$this.parallaxSlider('slide',slide_int,0);
+								} else {
+									//This is a history event (back, forward) so use the animation!
+									$this.parallaxSlider('slide',slide_int);
+								}
+							}
+						}
 					});
-					//Check if a valid slide integer has been passed in the hash
-					var slide_int = parseInt(window.location.hash.replace('#slide',''));
-					if (options.hash && ( typeof(slide_int) == 'number' )) {
-						console.log('slide',slide_int);
-						$this.parallaxSlider('slide',slide_int,0);
+					//Trigger hash change if enabled
+					if (options.hash) {
+						//Use hashchange event to load the slide
+						$(window).trigger('hashchange');
 					}
 					/*
 					 * Make sure all images have been loaded using imagesLoaded jQuery plugin
@@ -293,6 +307,7 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 				animCssObject = {
 						left	: slide_to + 'px'
 				};
+				//Update the history hash
 				window.location.hash = 'slide'+slide;
 				//Animate the Slide
 				if (Modernizr.cssanimations && options.css3) {
