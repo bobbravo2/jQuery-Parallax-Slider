@@ -13,7 +13,7 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
  * @TODO check width of each slider and thumbnail, to allow for unique widths
  */
 (function($) {
-	var options = {
+	var globalOptions = {
 			autoPlay			: 3000,//(mixed) (bool) false to disable, (int) duration to hold between slides in ms
 			circular		: true,//(bool) true, will repeat, false, will stop at the end
 			css3			: false, //(bool) enable CSS3 transitions?
@@ -34,11 +34,13 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 	var methods = {
 			init: function  (userOptions) {
 				return this.each(function() {
-					$.extend(options, userOptions);
+					var options = $.extend({}, globalOptions, userOptions);
 					var $this 	= $(this),
 					data = $this.data('lax');
 					//If the element has already been initialized, just return it.
 					if (data) return $this;
+					//If jQuery mobile, disable hash
+					if (typeof(jQuery.mobile) == 'object') options.hash = false;
 					if (options.debug) {
 						console.group('jquery.parallax init'); 
 						console.log('settings',options);
@@ -52,7 +54,7 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 					$pxs_prev		= $('.pxs_prev',$this),
 					$pxs_bg		= $('.pxs_bg',$this),
 					backgrounds = new Array();
-					
+
 					//Check if Modernizr is in the DOM
 					if (typeof(Modernizr)=='undefined') Modernizr=false;
 					if (Modernizr.csstransitions && options.css3 ) {
@@ -197,13 +199,7 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 						$this.parallaxSlider('slide',data.current,0);
 						$this.parallaxSlider('refresh');
 					});
-					//Trigger hash change if enabled
-					if (options.hash) {
-						var slide_int = parseInt(window.location.hash.replace('#slide',''));
-						if (typeof(slide_int) == 'number') {
-								$this.parallaxSlider('slide',slide_int,0);
-						}
-					}
+
 					/*
 					 * Make sure all images have been loaded using imagesLoaded jQuery plugin
 					 */
@@ -212,6 +208,13 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 						percent.html(( Math.round( ( loaded * 100 ) / total ) ) + '%' );
 					}).always( function  (images) {
 						$pxs_loading.hide();
+						//Trigger hash change if enabled
+						if (options.hash) {
+							var slide_int = parseInt(window.location.hash.replace('#slide',''));
+							if (typeof(slide_int) == 'number') {
+								$this.parallaxSlider('slide',slide_int,0);
+							}
+						}
 						$pxs_slider_wrapper.fadeIn(options.fadein, function() {
 							//if autoplay is enabled, trigger play action at the end of the animation
 							if (options.autoPlay) {
@@ -227,7 +230,8 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 			stop: function  () {
 				return this.each( function  () {
 					var $this = $(this),
-					data = $this.data('lax');
+					data = $this.data('lax'),
+					options = data.options;
 					//Toggle the buttons
 					data.buttons.play.show();
 					data.buttons.pause.hide();
@@ -241,9 +245,9 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 				//Invoke a slide immediately for a more responsive "feel"
 				if (playbutton) $this.parallaxSlider('slide');
 				return this.each( function  () {
-					options.circular = true;
 					$this = $(this),
-					data = $this.data('lax');
+					data = $this.data('lax'),
+					options = data.options;
 					if (options.debug) {
 						console.log('play called on',$this);
 						console.log('play data ',data);
@@ -267,7 +271,8 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 			slide: function  (slide,timing) {
 				return this.each( function  () {
 				$this = $(this),
-				data = $this.data('lax');
+				data = $this.data('lax'),
+				options = data.options;
 				if (!data) return;
 				if (typeof(slide) == 'undefined') {
 					data.current++;
@@ -295,9 +300,11 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 				animCssObject = {
 						left	: slide_to + 'px'
 				};
-				//Update the history hash
-				if (isNaN(slide)) slide = 0;
-				window.location.replace('#slide'+slide);
+				if (options.hash) {
+					//Update the history hash
+					if (isNaN(slide)) slide = 0;
+					window.location.replace('#slide'+slide);
+				}
 				//Animate the Slide
 				if (Modernizr.cssanimations && options.css3) {
 					if (options.debug) console.log('using css animations');
@@ -327,8 +334,9 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 			refresh: function  () {
 				return this.each( function  () {
 					var $this = $(this),
-					data = $this.data('lax');
-					var position_nav = 0,
+					data = $this.data('lax'),
+					options = data.options,
+					position_nav = 0,
 					nav_top = 0;
 					data.w_w = $(window).width();
 					data.viewport_width = $this.width();
