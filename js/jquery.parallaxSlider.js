@@ -112,7 +112,7 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 											next: $pxs_next
 											},
 							current: 0,
-							slideshow:-1,
+							slideshow:null,
 							one_image_w: $one_img.width(),
 							image_aspect: $one_img.width()/$one_img.height(),
 							nav_offset: parseInt( $(".pxs_navigation SPAN").css('width') ) + parseInt( $("UL.pxs_slider LI IMG").css('border-left-width')),
@@ -124,6 +124,8 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 						});
 						data = $this.data('lax');
 					}
+					if (options.debug) console.log('init data',data);
+
 					//Set up the play/pause buttons
 					data.buttons.play.on('click.lax', function  () {
 						$this.parallaxSlider('play',true);
@@ -133,7 +135,6 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 						$this.parallaxSlider('stop');
 						return false;
 						}).appendTo($pxs_actions).hide();		 
-					if (options.debug) console.log('init data',data);
 					
 					
 					//slide when clicking the navigation buttons
@@ -211,7 +212,8 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 						//Trigger hash change if enabled
 						if (options.hash) {
 							var slide_int = parseInt(window.location.hash.replace('#slide',''));
-							if (typeof(slide_int) == 'number') {
+							
+							if (! isNaN(slide_int) ) {
 								$this.parallaxSlider('slide',slide_int,0);
 							}
 						}
@@ -237,7 +239,8 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 					data.buttons.pause.hide();
 					if (options.debug) console.log('pre-(stop) data',data.slideshow);
 					clearInterval(data.slideshow);
-					if (options.debug) console.log('stop data',data);
+					data.slideshow = null;
+					if (options.debug) console.log('post-(stop) data',data.slideshow);
 				});	
 			},
 			play: function  (playbutton) {
@@ -258,10 +261,12 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 					data.buttons.pause.show();
 					data.buttons.play.hide();
 					if (options.autoPlay == 0) options.autoPlay = 3000; //Default override for API invoked play
-					data.slideshow	= setInterval(function(){
-						if (options.debug) console.log('play interval tick');
-						$this.parallaxSlider('slide',undefined);
-					}, options.autoPlay + options.speed);
+					if ( data.slideshow == null ) {
+						data.slideshow	= setInterval(function(){
+							if (options.debug) console.log('play interval tick');
+							$this.parallaxSlider('slide');
+						}, options.autoPlay + options.speed);
+					}
 				});
 			},
 			/**

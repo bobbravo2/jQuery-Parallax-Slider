@@ -3,17 +3,19 @@
 <meta http-equiv="content-type" content="text/html" />
 <title>Parallax jQuery Slider Plugin</title>
 <link rel="stylesheet" type="text/css" href="style.css" />
+<script src="js/modernizr.js" language="javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js" language="javascript"></script>
 <!-- 
 <script type="text/javascript" src="https://getfirebug.com/firebug-lite.js"></script>
 <script src="js/jquery.easing.js" language="javascript"></script>
+<script src="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.js"></script>
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.css" />
  -->
-<script src="js/modernizr.js" language="javascript"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js" language="javascript"></script>
 <script src="js/jquery.parallaxSlider.js" language="javascript"></script>
 <script type="text/javascript">
 jQuery(document).ready(function($){
 	var easing = 'swing';
-	$("#slider").parallaxSlider({
+	$("#slider2").parallaxSlider({
 		autoPlay:500,//false to disable, otherwise int duration in ms hold between slides
 		speed:2000, //transition duration between slides
 		easing: 'swing',
@@ -21,9 +23,17 @@ jQuery(document).ready(function($){
 		thumbRotation:false,
 		//debug:true,
 	});
+	$("#slider").parallaxSlider({
+		/* debug:true */
+		}); 
 })
 
 </script>
+<style>
+#slider2 {
+	position:relative;
+}
+</style>
 </head>
 <body>
 <!-- 
@@ -32,7 +42,7 @@ jQuery(document).ready(function($){
 	Useful to think of #slider as a "Viewport" and if the options.debug is true, it will be referred to as such.
 	Background images will be overflow:hidden relative to this div 
  -->
-<div id="slider">
+<div id="slider" class="slider" >
 	<div class="pxs_bg">
 	</div>
 	<!-- Background classes will be automatically generated, CSS must specify background images to use, see style.css for instructions -->
@@ -77,6 +87,7 @@ jQuery(document).ready(function($){
 		</ul>
 	</div><!-- End .pxs_slider_wrapper -->
 </div>	
+
 <div id="content">
 <h1>jQuery Parallax Slider</h1>
 <p>An awesome, responsive jQuery parallax slider.</p>
@@ -101,6 +112,7 @@ var options = {
 </code>
 <h3>Changelog</h3>
 <ul>
+	<li>1.4.0 - Fixed multiple sliders in the DOM bugs</li>
 	<li>1.3.0 - Added history hash support to enable dynamically loading the last seen slide for a more consistent UX</li>
 	<li>1.2.0 - refactored image loading using jquery.imagesloaded plugin for cross browser compat, and percentage of load indicators</li>
 	<li>1.1.7 - requires jQuery 1.7 for event delegation.</li>
