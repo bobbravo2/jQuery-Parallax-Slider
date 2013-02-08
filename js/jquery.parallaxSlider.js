@@ -5,7 +5,7 @@
 d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img").add(f.filter("img")),n=e.length,i=[],h=[],g=[];n||l();e.bind("load.imagesLoaded error.imagesLoaded",m).each(function(){var c=this.src,a=b.data(this,"imagesLoaded");a&&a.src===c?b(this).triggerHandler(a.event):(this.src=j,this.src=c)});return d?d.promise(f):f}})(jQuery);
 /**
  * jQuery Parallax Image Slider
- * Version 1.2.0
+ * Version 1.2.1
  * Please fork on github!
  * @author Circle Tree, LLC
  * @depends imagesloaded https://github.com/desandro/imagesloaded
@@ -93,6 +93,7 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 					$pxs_slider_wrapper = $('.pxs_slider_wrapper',$this),
 					$pxs_actions = $("<span class=\"pxs_actions\"></span>"), 
 					$one_img = $($pxs_slider.find('img')[0]);
+					
 					$pxs_actions.appendTo($this);
 					//Prepare the loading state
 					$pxs_loading.show().append('<span class="percent">0%</span>') ;
@@ -113,8 +114,8 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 											},
 							current: 0,
 							slideshow:null,
-							one_image_w: $one_img.width(),
-							image_aspect: $one_img.width()/$one_img.height(),
+							one_image_w: parseInt( $one_img.attr('width') ),
+							image_aspect: parseInt( $one_img.attr('width') ) / parseInt( $one_img.attr('height') ),
 							nav_offset: parseInt( $(".pxs_navigation SPAN").css('width') ) + parseInt( $("UL.pxs_slider LI IMG").css('border-left-width')),
 							w_w: $(window).width(),
 							viewport_width: $this.width(),
@@ -124,7 +125,9 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 						});
 						data = $this.data('lax');
 					}
-					if (options.debug) console.log('init data',data);
+					if (options.debug) {
+						console.log('init data',data);
+					}
 
 					//Set up the play/pause buttons
 					data.buttons.play.on('click.lax', function  () {
@@ -210,9 +213,8 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 					}).always( function  (images) {
 						$pxs_loading.hide();
 						//Trigger hash change if enabled
-						if (options.hash) {
+						if (true == options.hash) {
 							var slide_int = parseInt(window.location.hash.replace('#slide',''));
-							
 							if (! isNaN(slide_int) ) {
 								$this.parallaxSlider('slide',slide_int,0);
 							}
@@ -225,9 +227,8 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 						});
 						$this.parallaxSlider('refresh');
 					});
-						
+					if (options.debug) console.groupEnd();
 				});//end jquery.each for init
-				if (options.debug) console.groupEnd();
 			},//End init
 			stop: function  () {
 				return this.each( function  () {
@@ -265,7 +266,7 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 						data.slideshow	= setInterval(function(){
 							if (options.debug) console.log('play interval tick');
 							$this.parallaxSlider('slide');
-						}, options.autoPlay + options.speed);
+						}, options.autoPlay );
 					}
 				});
 			},
@@ -350,17 +351,18 @@ d=b.isFunction(b.Deferred)?b.Deferred():0,o=b.isFunction(d.notify),e=f.find("img
 					data.elems.css({
 						width: data.viewport_width + 'px'
 					});
+					var images_css_object;
 					if (data.viewport_width < (data.one_image_w + data.nav_offset*2)) {
 						//Viewport is wider than images + nav
 						var width = data.viewport_width - data.nav_offset*2,
 						height = parseInt(width/data.image_aspect),
 						nav_top = (height/2) + (data.buttons.next.height()/4);
-						var images_css_object = {width: width+'px',height:height+'px'};
+						images_css_object = {width: width+'px',height:height+'px'};
 					} else {
 						//Images are larger than viewport
-						var position_nav	= (data.viewport_width/2) - (data.one_image_w/2) - data.nav_offset;
+						position_nav	= (data.viewport_width/2) - (data.one_image_w/2) - data.nav_offset;
 						nav_top = ((data.one_image_w / data.image_aspect) / 2) + (data.buttons.next.height()/4);
-						var images_css_object = {width: data.one_image_w+'px',height:(data.one_image_w/data.image_aspect)+'px'};
+						images_css_object = {width: data.one_image_w+'px',height:(data.one_image_w/data.image_aspect)+'px'};
 					}
 					data.images.css(images_css_object);
 					if (options.debug) {
