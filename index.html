@@ -4,7 +4,7 @@
 <title>Parallax jQuery Slider Plugin</title>
 <link rel="stylesheet" type="text/css" href="style.css" />
 <script src="js/modernizr.js" language="javascript"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js" language="javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" language="javascript"></script>
 <!-- 
 <script type="text/javascript" src="https://getfirebug.com/firebug-lite.js"></script>
 <script src="js/jquery.easing.js" language="javascript"></script>
@@ -15,17 +15,17 @@
 <script type="text/javascript">
 jQuery(document).ready(function($){
 	var easing = 'swing';
-	$("#slider2").parallaxSlider({
-		autoPlay:500,//false to disable, otherwise int duration in ms hold between slides
+	$("#slider").parallaxSlider({
+		autoPlay:5000,//false to disable, otherwise int duration in ms hold between slides
 		speed:2000, //transition duration between slides
 		easing: 'swing',
-		numBackgrounds: 3,
+		numBackgrounds: 4,
 		thumbRotation:false,
-		//debug:true,
+		// hash: false,
+		// debug:true,
+		css3: true,
+		easingCSS3: 'cubic-bezier(0.000, 0.265, 1.000, 0.005)',
 	});
-	$("#slider").parallaxSlider({
-		/* debug:true */
-		}); 
 })
 
 </script>
@@ -106,7 +106,8 @@ var options = {
 			thumbAnimateTime: 100, //(int) ms animation for thumb animation
 			numBackgrounds: 3, //(int) Number of parallax backgrounds
 			customBackground: false, //(string) Custom Background markup
-			debug: false //(bool) true: enable console statements for debugging
+			debug: false, //(bool) true: enable console statements for debugging
+			hash			: true //(bool) use hashes to track the current slide in history
 		};
 </pre>
 </code>
