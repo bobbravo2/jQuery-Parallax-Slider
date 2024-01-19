@@ -1,11 +1,12 @@
 <!DOCTYPE html>
+<html lang="en">
 <head>
 <meta http-equiv="content-type" content="text/html" />
 <title>Parallax jQuery Slider Plugin</title>
 <link rel="stylesheet" type="text/css" href="style.css" />
 <script src="js/modernizr.js" language="javascript"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" language="javascript"></script>
-<!-- 
+<!--
 <script type="text/javascript" src="https://getfirebug.com/firebug-lite.js"></script>
 <script src="js/jquery.easing.js" language="javascript"></script>
 <script src="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.js"></script>
@@ -35,12 +36,12 @@ jQuery(document).ready(function($){
 }
 </style>
 </head>
-<body>
-<!-- 
+<body class="container">
+<!--
 	This is the DOM element to instantiate as a jquery.parallaxSlider
 	It may have a relative or fixed width applied to it and all of the contained elements will be re-calculated accordingly
 	Useful to think of #slider as a "Viewport" and if the options.debug is true, it will be referred to as such.
-	Background images will be overflow:hidden relative to this div 
+	Background images will be overflow:hidden relative to this div
  -->
 <div id="slider" class="slider" >
 	<div class="pxs_bg">
@@ -51,49 +52,49 @@ jQuery(document).ready(function($){
 		<ul class="pxs_slider">
 			<li>
 				<a href="#"><!-- Images may be wrapped in an anchor to make them clickable -->
-					<img src="image.php?filename=featured_012.jpg" height="250" width="940" title="Interactive Marketing" alt="Interactive Marketing" />
+					<img src="images/featured_012.jpg" height="250" width="940" title="Interactive Marketing" alt="Interactive Marketing" />
 				</a>
 			</li>
 			<li>
 				<a href="#">
-					<img src="image.php?filename=featured_011.jpg" title="WHMCS Services" height="250" width="940" alt="WHMCS Services" />
+					<img src="images/featured_011.jpg" title="WHMCS Services" height="250" width="940" alt="WHMCS Services" />
 				</a>
 			</li>
 			<li>
-				<img src="image.php?filename=featured_012.jpg" title="Website Design" height="250" width="940" alt="Website Design" />
+				<img src="images/featured_012.jpg" title="Website Design" height="250" width="940" alt="Website Design" />
 			</li>
 			<li>
-				<img src="image.php?filename=featured_011.jpg" title="Web Hosting" height="250" width="940" alt="Web Hosting" />
+				<img src="images/featured_011.jpg" title="Web Hosting" height="250" width="940" alt="Web Hosting" />
 			</li>
 		</ul>
 		<div class="pxs_navigation">
 			<span class="pxs_next"></span>
 			<span class="pxs_prev"></span>
 		</div>
-		<!-- these are the thumbnails for the above featured images. They are ordered the same as the above slider http://192.168.0.8/lax/images, no rel/id's required for proper functioning -->
+		<!-- these are the thumbnails for the above featured images. They are ordered the same as the above slider /images, no rel/id's required for proper functioning -->
 		<ul class="pxs_thumbnails">
 			<li>
-				<img src="image.php?filename=featured_012-150x150.jpg" height="150" width="150" alt="Interactive Marketing" />
+				<img src="images/featured_012-150x150.jpg" height="150" width="150" alt="Interactive Marketing" />
 			</li>
 			<li>
-				<img src="image.php?filename=featured_011-150x150.jpg" height="150" width="150" alt="WHMCS Services" />
+				<img src="images/featured_011-150x150.jpg" height="150" width="150" alt="WHMCS Services" />
 			</li>
 			<li>
-				<img src="image.php?filename=featured_013-150x150.jpg" height="150" width="150" alt="Website Design" />
+				<img src="images/featured_013-150x150.jpg" height="150" width="150" alt="Website Design" />
 			</li>
 			<li>
-				<img src="image.php?filename=featured_014-150x150.jpg" height="150" width="150" alt="Web Hosting" />
+				<img src="images/featured_014-150x150.jpg" height="150" width="150" alt="Web Hosting" />
 			</li>
 		</ul>
 	</div><!-- End .pxs_slider_wrapper -->
-</div>	
+</div>
 
 <div id="content">
 <h1>jQuery Parallax Slider</h1>
-<p>An awesome, responsive jQuery parallax slider.</p>
-<p>New in 1.3.0 History Support Ñ watch the slide you're currently on, and <a href="page.html">click here</a>, and then go back to this page &mdash; voila! the same slide is shown!</p>
-<h2>Default options:</h2>
-<code><pre>
+<p>An awesome, responsive jQuery parallax slider with a declarative API for outside interactions across pages and views.</p>
+
+<h2>Default initialization options:</h2>
+<code><pre class="text-primary-emphasis">
 var options = {
 			autoPlay		: 3000,//(mixed) (bool) false to disable, (int) duration to hold between slides in ms
 			speed			: 1000,//(int) speed of each slide animation in ms
@@ -111,7 +112,45 @@ var options = {
 		};
 </pre>
 </code>
-<h3>Changelog</h3>
+	<h2>jQuery.parallaxSlider API</h2>
+	<div class="row">
+		<div class="col-3">
+			<h3>Play / Resume</h3>
+			<code>
+				$().parallaxSlider('play');<br />
+			</code>
+			<button onclick="jQuery('#slider').parallaxSlider('play');return false;" class="btn btn-success">Play</button>
+			<h3>Stop / Pause</h3>
+			<code>
+				$().parallaxSlider('stop'); <br />
+			</code>
+			<button onclick="jQuery('#slider').parallaxSlider('stop');" class="btn btn-secondary">Stop</button>
+		</div>
+		<div class="col-3">
+			<h3>Refresh</h3>
+			<p>Refreshes positioning, elements, and recomputes layout.
+				Useful if the DOM has been modified by other logic</p>
+
+			<code>
+				$().parallaxSlider('refresh');<br />
+			</code>
+			<button onclick="jQuery('#slider').parallaxSlider('refresh');return false;" class="btn btn-primary"> Refresh</button>
+		</div>
+		<div class="col-3">
+			<h3>Go to slide, index 2</h3>
+				<code>$().parallaxSlider('slide', 2);<br /></code>
+				<input type="text" id="slide_to_value" value="2" class="col-1"/>
+				<button onclick="jQuery('#slider').parallaxSlider('slide', document.querySelector('#slide_to_value').value);return false;" class="btn btn-primary">Goto</button>
+				<p class="small">Uses JS array index <code>0</code> for the first slide.</p>
+			<h3>Destroy</h3>
+				Cleans up any dom elements or other things that may affect mobile performance. <br/>
+				<code>
+					$().parallaxSlider('destroy');<br />
+				</code>
+				<button onclick="jQuery('#slider').parallaxSlider('destroy');return false;" class="btn btn-danger">Destroy</button>
+		</div>
+	</div>
+<h5>Changelog</h5>
 <ul>
 	<li>1.4.0 - Fixed multiple sliders in the DOM bugs</li>
 	<li>1.3.0 - Added history hash support to enable dynamically loading the last seen slide for a more consistent UX</li>
@@ -119,5 +158,7 @@ var options = {
 	<li>1.1.7 - requires jQuery 1.7 for event delegation.</li>
 </ul>
 </div>
+	<script type="application/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" />
 </body>
 </html>
