@@ -96,19 +96,22 @@ jQuery(document).ready(function($){
 <h2>Default initialization options:</h2>
 <code><pre class="text-primary-emphasis">
 var options = {
-			autoPlay		: 3000,//(mixed) (bool) false to disable, (int) duration to hold between slides in ms
-			speed			: 1000,//(int) speed of each slide animation in ms
-			easingBg		: 'easeInOutQuart',//(string) easing effect for the background animation
-			easing			: 'easeInOutQuart',//(string) easing effect for the slide animation
+			autoPlay			: 3000,//(mixed) (bool) false to disable, (int) duration to hold between slides in ms
 			circular		: true,//(bool) true, will repeat, false, will stop at the end
+			css3			: false, //(bool) enable CSS3 transitions?
+			css3Easing		: 'ease',//(string) easing CSS3 for the animation
+			easing			: 'swing',//(string) easing effect for the animation
+			easingBg		: 'swing',//(string) easing effect for the background animation
+			fadein: 1000, //(int) ms after images loaded fade in duration
+			hash			: true, //(bool) use hashes to track the current slide in history
+			speed			: 1000,//(int) speed of each slide animation in ms
 			thumbs			: true,// (bool) true enables thumbnails, false disables
 			thumbRotation	: 5,//(mixed): (int) degrees thumbs will be randomly rotated, bool false to disable rotation
 			thumbAnimate 	: -10, //(int) px to animate thumbnails
 			thumbAnimateTime: 100, //(int) ms animation for thumb animation
 			numBackgrounds: 3, //(int) Number of parallax backgrounds
 			customBackground: false, //(string) Custom Background markup
-			debug: false, //(bool) true: enable console statements for debugging
-			hash			: true //(bool) use hashes to track the current slide in history
+			debug: false //(bool) true: enable console statements for debugging
 		};
 </pre>
 </code>
